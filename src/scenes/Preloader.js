@@ -36,8 +36,8 @@ export class Preloader extends Scene
 
         this.load.image('exit', 'exit.png');
         this.load.image('comenzar', 'comenzar.png');
-        this.load.image('Alaric', 'Alaric.png');
-        this.load.image('Magnus', 'Magnus.png');
+        this.load.image('Alaric', 'Alaric3.png');
+        this.load.image('Magnus', 'Magnus3.png');
     }
 
     create ()

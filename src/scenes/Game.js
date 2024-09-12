@@ -12,7 +12,7 @@ export class Game extends Scene
 
         //Crear a Alaric
         this.player1 = this.physics.add.sprite(100, 900, "Alaric");
-        this.player1.setScale(2); 
+        this.player1.setScale(1); 
         this.player1.setBounce(0 );
         this.player1.setCollideWorldBounds(true);
 
@@ -26,7 +26,7 @@ export class Game extends Scene
 
         //Crear a Magnus
         this.player2 = this.physics.add.sprite(900, 100, "Magnus");
-        this.player2.setScale(2); 
+        this.player2.setScale(1); 
         this.player2.setBounce(0 );
         this.player2.setCollideWorldBounds(true);
 
