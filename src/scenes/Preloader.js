@@ -33,9 +33,8 @@ export class Preloader extends Scene
         this.load.setPath('assets');
 
         this.load.image('logo', 'logo.png');
-
+        this.load.image('ataque', 'fuego.png');
         this.load.image('exit', 'exit.png');
-        this.load.image('comenzar', 'comenzar.png');
         this.load.image('Alaric', 'Alaric3.png');
         this.load.image('Magnus', 'Magnus3.png');
     }

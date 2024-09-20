@@ -6,4 +6,6 @@ export class Game2 extends Scene
     {
         super('Game2');
     }
+    
+   
 }
