@@ -3,10 +3,15 @@ import { Scene } from 'phaser';
 export class Game extends Scene {
     constructor() {
         super('Game');
+        this.vidaActual = 10; // Establecer la vida inicial
+        this.vidaMaxima = 10; // Establecer la vida máxima
+
+        this.vidaActualMagnus = 10; // Vida inicial de Magnus
+        this.vidaMaximaMagnus = 10; // Vida máxima de Magnus
     }
 
     create() {
-        this.cameras.main.setBackgroundColor(0x006400); // Verde oscuro en hexadecimal
+        this.cameras.main.setBackgroundColor(0x006400);
 
         // Crear a Alaric
         this.player1 = this.physics.add.sprite(100, 900, "Alaric");
@@ -20,7 +25,6 @@ export class Game extends Scene {
             down: Phaser.Input.Keyboard.KeyCodes.S,
             left: Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D,
-            space: Phaser.Input.Keyboard.KeyCodes.SPACE
         });
 
         // Crear a Magnus
@@ -42,15 +46,24 @@ export class Game extends Scene {
         this.physics.add.collider(this.player2, this.cuadrado);
         this.cuadrado.body.setImmovable(true);
 
-        // Grupo para los ataques
-        this.ataques = this.physics.add.group();
+        // Escuchar la barra espaciadora para Alaric
+        this.input.keyboard.on('keydown-SPACE', this.ataqueAlaric, this);
 
-        // Listener para el clic izquierdo del mouse (ataque de Magnus)
+        // Escuchar el clic izquierdo del ratón para Magnus
         this.input.on('pointerdown', (pointer) => {
             if (pointer.leftButtonDown()) {
-                this.lanzarAtaque(this.player2); // Magnus ataca a Alaric
+                this.ataqueMagnus();
             }
-        });
+        }, this);
+
+        // Crear un grupo de ataques
+        this.ataques = this.physics.add.group();
+
+        // Vida de Alaric
+        this.vidaAlaric = this.add.sprite(100, 50, 'barraVida', 0);
+
+        // Vida de Magnus
+        this.vidaMagnus = this.add.sprite(900, 50, 'barraVida', 0);
     }
 
     update() {
@@ -80,35 +93,61 @@ export class Game extends Scene {
             this.player2.setVelocityY(350);
         }
 
-        // Ataque de Alaric con barra espaciadora
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
-            this.lanzarAtaque(this.player1); // Alaric ataca a Magnus
-        }
+        // Verificar colisiones entre ataques de Alaric y Magnus
+        this.ataques.children.iterate((ataque) => {
+            if (ataque) {
+                if (this.physics.overlap(ataque, this.player2) && ataque.getData('owner') === 'Alaric') {
+                    ataque.destroy();
+                    console.log("¡Alaric golpeó a Magnus!");
+                    this.recibeDañoMagnus(); // Magnus recibe daño
+                } else if (this.physics.overlap(ataque, this.player1) && ataque.getData('owner') === 'Magnus') {
+                    ataque.destroy();
+                    console.log("¡Magnus golpeó a Alaric!");
+                    this.recibeDaño(); // Alaric recibe daño
+                }
+            }
+        });
     }
 
-    lanzarAtaque(atacante) {
-        // Crear la imagen del ataque en la posición del atacante
-        let ataque = this.ataques.create(atacante.x, atacante.y, 'ataque');
-        ataque.setScale(0.1); // Ajusta el tamaño si es necesario
-        this.physics.add.existing(ataque); // Asegúrate de que el ataque tiene un cuerpo físico
+    ataqueAlaric() {
+        const ataque1 = this.ataques.create(this.player1.x, this.player1.y, 'ataque');
+        ataque1.setData('owner', 'Alaric'); // Etiquetar el ataque
+        const direction = new Phaser.Math.Vector2(this.player2.x - this.player1.x, this.player2.y - this.player1.y);
+        direction.normalize();
+        ataque1.setVelocity(direction.x * 500, direction.y * 500);
+        ataque1.setScale(0.1);
+        console.log("Alaric ataca!");
+    }
+    
+    ataqueMagnus() {
+        const ataque = this.ataques.create(this.player2.x, this.player2.y, 'ataque');
+        ataque.setData('owner', 'Magnus'); // Etiquetar el ataque
+        const direction = new Phaser.Math.Vector2(this.player1.x - this.player2.x, this.player1.y - this.player2.y);
+        direction.normalize();
+        ataque.setVelocity(direction.x * 500, direction.y * 500);
+        ataque.setScale(0.1);
+        console.log("Magnus ataca!");
+    }
 
-        // Determinar la dirección del ataque basada en la velocidad actual del atacante
-        const direction = new Phaser.Math.Vector2(atacante.body.velocity.x, atacante.body.velocity.y);
+    recibeDaño() {
+        this.vidaActual--; // Disminuye la vida de Alaric
+        this.updateVida(); // Actualiza la barra de vida
+        console.log("Alaric recibe daño! Vida actual:", this.vidaActual);
+    }
+    
+    updateVida() {
+        const frameIndex = 10 - this.vidaActual; // Asumiendo que hay 11 frames, de 0 a 10
+        this.vidaAlaric.setFrame(frameIndex); // Cambia al siguiente frame
+    }
 
-        // Normalizar la dirección y aplicar velocidad
-        if (direction.length() > 0) {
-            direction.normalize(); // Normaliza el vector para obtener una dirección
-        } else {
-            direction.set(1, 0); // Si no se mueve, lanzar hacia la derecha por defecto
-        }
+    recibeDañoMagnus() {
+        this.vidaActualMagnus--;
+        this.updateVidaMagnus();
+        console.log("Magnus recibe daño! Vida actual:", this.vidaActualMagnus);
+    }
 
-        const speed = 900; // Ajusta la velocidad según sea necesario
-        ataque.body.setVelocity(direction.x * speed, direction.y * speed);
-        ataque.body.setCollideWorldBounds(true);
-
-        // Destruir el ataque después de 2 segundos
-        this.time.delayedCall(2000, () => {
-            ataque.destroy();
-        });
+    updateVidaMagnus() {
+        const frameIndex = 10 - this.vidaActualMagnus; // Asumiendo que hay 11 frames
+        this.vidaMagnus.setFrame(frameIndex);
     }
 }
