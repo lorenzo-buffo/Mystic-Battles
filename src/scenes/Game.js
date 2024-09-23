@@ -133,8 +133,12 @@ export class Game extends Scene {
         this.vidaActual--; // Disminuye la vida de Alaric
         this.updateVida(); // Actualiza la barra de vida
         console.log("Alaric recibe daño! Vida actual:", this.vidaActual);
-    }
     
+        // Verificar si Alaric ha llegado a 0 vida
+        if (this.vidaActual <= 0) {
+            this.scene.start('GameOver'); // Cambia a la escena de Game Over
+        }
+    }
     updateVida() {
         const frameIndex = 10 - this.vidaActual; // Asumiendo que hay 11 frames, de 0 a 10
         this.vidaAlaric.setFrame(frameIndex); // Cambia al siguiente frame
@@ -144,6 +148,11 @@ export class Game extends Scene {
         this.vidaActualMagnus--;
         this.updateVidaMagnus();
         console.log("Magnus recibe daño! Vida actual:", this.vidaActualMagnus);
+    
+        // Verificar si Magnus ha llegado a 0 vida
+        if (this.vidaActualMagnus <= 0) {
+            this.scene.start('GameOver'); // Cambia a la escena de Game Over
+        }
     }
 
     updateVidaMagnus() {
