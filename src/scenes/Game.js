@@ -3,15 +3,11 @@ import { Scene } from 'phaser';
 export class Game extends Scene {
     constructor() {
         super('Game');
-        this.vidaActual = 10; // Establecer la vida inicial
-        this.vidaMaxima = 10; // Establecer la vida máxima
-
-        this.vidaActualMagnus = 10; // Vida inicial de Magnus
-        this.vidaMaximaMagnus = 10; // Vida máxima de Magnus
+      
     }
 
     create() {
-        this.cameras.main.setBackgroundColor(0x006400);
+    this.cameras.main.setBackgroundColor(0x006400);
 
     // Crear la animación para Alaric
     this.anims.create({
@@ -115,6 +111,13 @@ export class Game extends Scene {
 
         // Vida de Magnus
         this.vidaMagnus = this.add.sprite(900, 50, 'barraVida', 0);
+
+        // Reiniciar vida
+        this.vidaActual = 10; // Establecer la vida inicial
+        this.vidaMaxima = 10; // Establecer la vida máxima
+        this.vidaActualMagnus = 10; // Vida inicial de Magnus
+        this.vidaMaximaMagnus = 10; // Vida máxima de Magnus
+        
     }
 
     update() {
@@ -177,6 +180,8 @@ export class Game extends Scene {
                 }
             }
         });
+
+        
     }
 
     ataqueAlaric() {
@@ -203,6 +208,10 @@ export class Game extends Scene {
         this.vidaActual--; // Disminuye la vida de Alaric
         this.updateVida(); // Actualiza la barra de vida
         console.log("Alaric recibe daño! Vida actual:", this.vidaActual);
+        // Verificar si Alaric ha perdido toda su vida
+         if (this.vidaActual <= 0) {
+        this.scene.start('GameOver'); // Cambia a la escena GameOver
+       }
     }
     
     updateVida() {
@@ -214,6 +223,10 @@ export class Game extends Scene {
         this.vidaActualMagnus--;
         this.updateVidaMagnus();
         console.log("Magnus recibe daño! Vida actual:", this.vidaActualMagnus);
+        // Verificar si Magnus ha perdido toda su vida
+         if (this.vidaActualMagnus <= 0) {
+        this.scene.start('GameOver'); // Cambia a la escena GameOver
+        }
     }
 
     updateVidaMagnus() {
