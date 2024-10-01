@@ -6,41 +6,36 @@ export class Game extends Scene {
     }
 
     initVariables() {
-        this.vidaActual = 10; // Vida inicial de Alaric
-        this.vidaActualMagnus = 10; // Vida inicial de Magnus
-        this.victoriasAlaric = 0; // Contador de victorias de Alaric
-        this.victoriasMagnus = 0; // Contador de victorias de Magnus
-        this.rondasGanadas = 2; // Número de rondas necesarias para ganar
-        this.contador = 3; // Inicializa el contador en 3
-        this.textoContador = null; // Para mostrar el contador en pantalla
-        this.enContador = true; // Indica si está en el contador
-        this.puedeDisparar = true; // Nueva variable para controlar disparos
-
-        // Posiciones iniciales
+        this.vidaActual = 10;
+        this.vidaActualMagnus = 10;
+        this.victoriasAlaric = 0;
+        this.victoriasMagnus = 0;
+        this.rondasGanadas = 2;
+        this.contador = 3;
+        this.textoContador = null;
+        this.enContador = true;
+        this.puedeDisparar = true;
+        this.puedeMoverse = true; // Inicializar aquí
         this.posicionAlaric = { x: 100, y: 900 };
         this.posicionMagnus = { x: 900, y: 100 };
     }
 
     create() {
-        this.initVariables(); // Inicializa las variables al crear la escena
+        this.initVariables();
 
         this.cameras.main.setBackgroundColor(0x006400);
-        
-        // Crear a Alaric
         this.player1 = this.physics.add.sprite(this.posicionAlaric.x, this.posicionAlaric.y, "alaric_walk");
         this.player1.setScale(1);
         this.player1.setBounce(0);
         this.player1.setCollideWorldBounds(true);
         this.player1.play('move');
 
-        // Crear a Magnus
         this.player2 = this.physics.add.sprite(this.posicionMagnus.x, this.posicionMagnus.y, "magnus_walk");
         this.player2.setScale(1);
         this.player2.setBounce(0);
         this.player2.setCollideWorldBounds(true);
         this.player2.play('move_magnus');
 
-        // Configurar controles
         this.cursors = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
             down: Phaser.Input.Keyboard.KeyCodes.S,
@@ -49,41 +44,31 @@ export class Game extends Scene {
         });
 
         this.cursors2 = this.input.keyboard.createCursorKeys();
-
-        // Colisiones entre jugadores
         this.physics.add.collider(this.player1, this.player2);
-
-        // Crear grupo de cajas
         this.cajas = this.physics.add.group();
 
-        // Crear las cajas en las esquinas
-        const tamañosCajas = [100, 100, 100, 100]; // Tamaños de las cajas en las esquinas
+        const tamañosCajas = [100, 100, 100, 100];
         const posicionesEsquinas = [
-            { x: 150, y: 200 }, // Esquina superior izquierda
-            { x: 850, y: 200 }, // Esquina superior derecha
-            { x: 150, y: 600 }, // Esquina inferior izquierda
-            { x: 850, y: 600 }  // Esquina inferior derecha
+            { x: 150, y: 200 },
+            { x: 850, y: 200 },
+            { x: 150, y: 600 },
+            { x: 850, y: 600 }
         ];
 
-        // Crear cajas en las esquinas
         posicionesEsquinas.forEach((pos, index) => {
-            const caja = this.cajas.create(pos.x, pos.y, 'Caja'); // Asegúrate de que 'caja_texture' esté cargado
+            const caja = this.cajas.create(pos.x, pos.y, 'Caja');
             caja.setSize(tamañosCajas[index], tamañosCajas[index]).setImmovable(true);
             caja.setScale(0.4);
-            caja.collisiones = 0; // Contador de colisiones para cajas pequeñas
+            caja.collisiones = 0;
         });
 
-        // Crear la caja más grande en el centro
-        const cajaCentro = this.cajas.create(500, 400, 'Caja'); // Asegúrate de que 'caja_texture' esté cargado
+        const cajaCentro = this.cajas.create(500, 400, 'Caja');
         cajaCentro.setSize(250, 250).setImmovable(true);
         cajaCentro.setScale(0.8);
-        cajaCentro.collisiones = 0; // Contador de colisiones para la caja grande
+        cajaCentro.collisiones = 0;
 
-        // Colisiones entre jugadores y cajas
         this.physics.add.collider(this.player1, this.cajas);
         this.physics.add.collider(this.player2, this.cajas);
-
-        // Escuchar ataques
         this.input.keyboard.on('keydown-SPACE', this.intentaAtaqueAlaric, this);
         this.input.on('pointerdown', (pointer) => {
             if (pointer.leftButtonDown()) {
@@ -91,10 +76,7 @@ export class Game extends Scene {
             }
         }, this);
 
-        // Crear grupo de ataques
         this.ataques = this.physics.add.group();
-
-        // Vida de Alaric
         this.vidaAlaric = this.add.sprite(100, 50, 'barraVida', 0);
         this.textoAlaric = this.add.text(100, 30, 'ALARIC', {
             fontSize: '20px',
@@ -102,7 +84,6 @@ export class Game extends Scene {
             align: 'center'
         }).setOrigin(0.5, 0.5);
 
-        // Vida de Magnus
         this.vidaMagnus = this.add.sprite(900, 50, 'barraVida', 0);
         this.textoMagnus = this.add.text(900, 30, 'MAGNUS', {
             fontSize: '20px',
@@ -110,21 +91,19 @@ export class Game extends Scene {
             align: 'center'
         }).setOrigin(0.5, 0.5);
 
-        // Mostrar el texto de victorias
         this.textoVictorias = this.add.text(500, 20, 'Alaric: 0 - Magnus: 0', {
             fontSize: '24px',
             fill: '#ffffff',
         }).setOrigin(0.5, 0.5);
 
-        // Inicializar vida y victorias
         this.resetRound();
     }
 
     update() {
-        if (this.enContador) {
-            return; // Si está en el contador, no permitir movimiento
+        if (!this.puedeMoverse || this.enContador) {
+            return; // No permitir movimiento
         }
-        // Movimiento de Alaric
+
         if (this.cursors.right.isDown) {
             this.player1.setVelocityX(350);
             this.player1.anims.play('walk_right', true);
@@ -144,7 +123,6 @@ export class Game extends Scene {
             this.player1.setVelocityY(0);
         }
 
-        // Movimiento de Magnus
         if (this.cursors2.right.isDown) {
             this.player2.setVelocityX(350);
             this.player2.anims.play('walk_right_magnus', true);
@@ -164,22 +142,21 @@ export class Game extends Scene {
             this.player2.setVelocityY(0);
         }
 
-        // Verificar colisiones entre ataques y cajas
         this.ataques.children.iterate((ataque) => {
             if (ataque) {
                 this.physics.add.collider(ataque, this.cajas, (ataque, caja) => {
-                    ataque.destroy(); // Destruir el ataque al colisionar con una caja
-                    caja.collisiones++; // Incrementar el contador de colisiones
+                    ataque.destroy();
+                    caja.collisiones++;
 
-                    // Verificar si la caja debe ser destruida
-                    if (caja.collisiones >= 5 && caja.scale === 0.4) { // Para las cajas pequeñas
-                        caja.destroy(); // Destruir la caja pequeña
-                    } else if (caja.collisiones >= 10 && caja.scale === 0.8) { // Para la caja grande
-                        caja.destroy(); // Destruir la caja grande
+                    if (caja.collisiones >= 5 && caja.scale === 0.4) {
+                        caja.destroy();
+                        this.generarPocion(caja.x, caja.y); // Generar poción
+                    } else if (caja.collisiones >= 10 && caja.scale === 0.8) {
+                        caja.destroy();
+                        this.generarPocion(caja.x, caja.y); // Generar poción
                     }
                 });
 
-                // Verificar colisiones con jugadores
                 if (this.physics.overlap(ataque, this.player2) && ataque.getData('owner') === 'Alaric') {
                     ataque.destroy();
                     this.recibeDañoMagnus();
@@ -227,14 +204,23 @@ export class Game extends Scene {
         this.vidaActual--;
         this.updateVida();
         console.log("Alaric recibe daño! Vida actual:", this.vidaActual);
-        this.checkForGameOver(); // Verificar si Alaric ha perdido
+        this.tintRed(this.player1);
+        this.checkForGameOver();
     }
 
     recibeDañoMagnus() {
         this.vidaActualMagnus--;
         this.updateVidaMagnus();
         console.log("Magnus recibe daño! Vida actual:", this.vidaActualMagnus);
-        this.checkForGameOver(); // Verificar si Magnus ha perdido
+        this.tintRed(this.player2);
+        this.checkForGameOver();
+    }
+
+    tintRed(player) {
+        player.setTint(0xff0000);
+        this.time.delayedCall(500, () => {
+            player.clearTint();
+        });
     }
 
     checkForGameOver() {
@@ -245,40 +231,46 @@ export class Game extends Scene {
             this.victoriasAlaric++;
             this.resetRound();
         }
-    
-        // Verifica si alguien ha ganado el juego
+
         if (this.victoriasAlaric >= this.rondasGanadas || this.victoriasMagnus >= this.rondasGanadas) {
-            this.scene.start('GameOver'); // Cambia a la escena GameOver
+            this.scene.start('GameOver');
         }
     }
 
     resetRound() {
+        this.puedeMoverse = false; // Desactivar el movimiento
+        this.player1.setVelocity(0);
+        this.player2.setVelocity(0);
+    
         this.vidaActual = 10;
         this.vidaActualMagnus = 10;
         this.updateVida();
         this.updateVidaMagnus();
         
-        // Restablecer posiciones
         this.player1.setPosition(this.posicionAlaric.x, this.posicionAlaric.y);
         this.player2.setPosition(this.posicionMagnus.x, this.posicionMagnus.y);
     
-        // Actualiza el texto de victorias
         this.textoVictorias.setText(`Alaric: ${this.victoriasAlaric} - Magnus: ${this.victoriasMagnus}`);
         
-        // Iniciar el contador
-        this.puedeDisparar = false; // Desactiva el disparo al reiniciar la ronda
+        this.puedeDisparar = false;
         this.contador = 3;
+        
+        // Destruir texto del contador si existe
+        if (this.textoContador) {
+            this.textoContador.destroy();
+        }
+    
         this.mostrarContador();
         this.iniciarContador();
     }
 
     updateVida() {
-        const frameIndex = 10 - this.vidaActual; // Asumiendo que hay 11 frames
+        const frameIndex = 10 - this.vidaActual;
         this.vidaAlaric.setFrame(frameIndex);
     }
 
     updateVidaMagnus() {
-        const frameIndex = 10 - this.vidaActualMagnus; // Asumiendo que hay 11 frames
+        const frameIndex = 10 - this.vidaActualMagnus;
         this.vidaMagnus.setFrame(frameIndex);
     }
 
@@ -290,18 +282,36 @@ export class Game extends Scene {
     }
 
     iniciarContador() {
-        this.enContador = true; // Activar el estado de contador
+        this.enContador = true;
         const contadorInterval = setInterval(() => {
             if (this.contador > 0) {
                 this.textoContador.setText(this.contador);
                 this.contador--;
             } else {
                 clearInterval(contadorInterval);
-                this.textoContador.destroy(); // Eliminar el texto del contador
-                this.enContador = false; // Desactivar el estado de contador
-                this.puedeDisparar = true; // Reactiva el disparo al terminar el contador
-                this.jugar(); // Iniciar el juego
+                this.textoContador.destroy();
+                this.enContador = false;
+                this.puedeDisparar = true;
+                this.puedeMoverse = true; // Reactivar el movimiento
             }
-        }, 1000); // Disminuye el contador cada segundo
+        }, 1000);
+    }
+
+    generarPocion(x, y) {
+        const probabilidad = Math.random();
+        if (probabilidad < 1) { // 50% de probabilidad de generar una poción
+            const pocion = this.physics.add.sprite(x, y, 'pocion'); // Asegúrate de tener una imagen de poción cargada
+            pocion.setInteractive();
+            pocion.on('pointerdown', () => {
+                this.recibirCuracion();
+                pocion.destroy();
+            });
+        }
+    }
+
+    recibirCuracion() {
+        this.vidaActual = Math.min(this.vidaActual + 1, 10); // Curar 1 punto de vida, max 10
+        this.updateVida();
+        console.log("Alaric ha recibido curación! Vida actual:", this.vidaActual);
     }
 }

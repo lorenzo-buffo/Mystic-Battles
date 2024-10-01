@@ -38,6 +38,8 @@ export class Preloader extends Scene
         this.load.spritesheet('alaric_walk', 'spritesheet2.2.png', { frameWidth: 68, frameHeight: 70 });
         this.load.spritesheet('magnus_walk', 'spritesheetmagnus.png', { frameWidth: 60, frameHeight: 60 });
         this.load.image('Caja', 'caja.png');
+        this.load.image('pocion', 'pocion.png');
+     
 }
 
     
