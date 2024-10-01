@@ -44,10 +44,54 @@ export class Preloader extends Scene
     
     create ()
     {
-        //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-        //  For example, you can define global animations here, so we can use them in other scenes.
-
-        //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+        
         this.scene.start('MainMenu');
+
+        // Crear animaciones para Alaric
+        this.anims.create({
+            key: 'move',
+            frames: this.anims.generateFrameNumbers("alaric_walk", { start: 0, end: 7 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        // Crear animaciones de caminar para Alaric
+        this.anims.create({
+            key: 'walk_right',
+            frames: this.anims.generateFrameNumbers('alaric_walk', { start: 4, end: 7 }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'walk_left',
+            frames: this.anims.generateFrameNumbers('alaric_walk', { start: 0, end: 3 }),
+            frameRate: 5,
+            repeat: -1
+        });
+        
+         // Crear animaciones para Magnus
+         this.anims.create({
+            key: 'move_magnus',
+            frames: this.anims.generateFrameNumbers("magnus_walk", { start: 0, end: 7 }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        // Crear animaciones de caminar para Magnus
+        this.anims.create({
+            key: 'walk_right_magnus',
+            frames: this.anims.generateFrameNumbers('magnus_walk', { start: 4, end: 7 }),
+            frameRate: 5,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'walk_left_magnus',
+            frames: this.anims.generateFrameNumbers('magnus_walk', { start: 0, end: 3 }),
+            frameRate: 5,
+            repeat: -1
+        });
+
     }
 }

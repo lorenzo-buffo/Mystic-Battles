@@ -11,6 +11,14 @@ export class Game extends Scene {
         this.victoriasAlaric = 0; // Contador de victorias de Alaric
         this.victoriasMagnus = 0; // Contador de victorias de Magnus
         this.rondasGanadas = 2; // Número de rondas necesarias para ganar
+        this.contador = 3; // Inicializa el contador en 3
+        this.textoContador = null; // Para mostrar el contador en pantalla
+        this.enContador = true; // Indica si está en el contador
+        this.puedeDisparar = true; // Nueva variable para controlar disparos
+
+        // Posiciones iniciales
+        this.posicionAlaric = { x: 100, y: 900 };
+        this.posicionMagnus = { x: 900, y: 100 };
     }
 
     create() {
@@ -18,61 +26,15 @@ export class Game extends Scene {
 
         this.cameras.main.setBackgroundColor(0x006400);
         
-        // Crear animaciones para Alaric
-        this.anims.create({
-            key: 'move',
-            frames: this.anims.generateFrameNumbers("alaric_walk", { start: 0, end: 7 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        // Crear animaciones de caminar para Alaric
-        this.anims.create({
-            key: 'walk_right',
-            frames: this.anims.generateFrameNumbers('alaric_walk', { start: 4, end: 7 }),
-            frameRate: 5,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'walk_left',
-            frames: this.anims.generateFrameNumbers('alaric_walk', { start: 0, end: 3 }),
-            frameRate: 5,
-            repeat: -1
-        });
-
         // Crear a Alaric
-        this.player1 = this.physics.add.sprite(100, 900, "alaric_walk");
+        this.player1 = this.physics.add.sprite(this.posicionAlaric.x, this.posicionAlaric.y, "alaric_walk");
         this.player1.setScale(1);
         this.player1.setBounce(0);
         this.player1.setCollideWorldBounds(true);
         this.player1.play('move');
 
-        // Crear animaciones para Magnus
-        this.anims.create({
-            key: 'move_magnus',
-            frames: this.anims.generateFrameNumbers("magnus_walk", { start: 0, end: 7 }),
-            frameRate: 5,
-            repeat: -1
-        });
-
-        // Crear animaciones de caminar para Magnus
-        this.anims.create({
-            key: 'walk_right_magnus',
-            frames: this.anims.generateFrameNumbers('magnus_walk', { start: 4, end: 7 }),
-            frameRate: 5,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'walk_left_magnus',
-            frames: this.anims.generateFrameNumbers('magnus_walk', { start: 0, end: 3 }),
-            frameRate: 5,
-            repeat: -1
-        });
-
         // Crear a Magnus
-        this.player2 = this.physics.add.sprite(900, 100, "magnus_walk");
+        this.player2 = this.physics.add.sprite(this.posicionMagnus.x, this.posicionMagnus.y, "magnus_walk");
         this.player2.setScale(1);
         this.player2.setBounce(0);
         this.player2.setCollideWorldBounds(true);
@@ -92,38 +54,40 @@ export class Game extends Scene {
         this.physics.add.collider(this.player1, this.player2);
 
         // Crear grupo de cajas
-this.cajas = this.physics.add.group();
+        this.cajas = this.physics.add.group();
 
-// Crear las cajas en las esquinas
-const tamañosCajas = [100, 100, 100, 100]; // Tamaños de las cajas en las esquinas
-const posicionesEsquinas = [
-    { x: 150, y: 200 }, // Esquina superior izquierda
-    { x: 850, y: 200 }, // Esquina superior derecha
-    { x: 150, y: 600 }, // Esquina inferior izquierda
-    { x: 850, y: 600 }  // Esquina inferior derecha
-];
+        // Crear las cajas en las esquinas
+        const tamañosCajas = [100, 100, 100, 100]; // Tamaños de las cajas en las esquinas
+        const posicionesEsquinas = [
+            { x: 150, y: 200 }, // Esquina superior izquierda
+            { x: 850, y: 200 }, // Esquina superior derecha
+            { x: 150, y: 600 }, // Esquina inferior izquierda
+            { x: 850, y: 600 }  // Esquina inferior derecha
+        ];
 
- // Crear cajas en las esquinas
- posicionesEsquinas.forEach((pos, index) => {
-    const caja = this.cajas.create(pos.x, pos.y, 'Caja'); // Asegúrate de que 'caja_texture' esté cargado
-    caja.setSize(tamañosCajas[index], tamañosCajas[index]).setImmovable(true), caja.setScale(0.4);
-});
+        // Crear cajas en las esquinas
+        posicionesEsquinas.forEach((pos, index) => {
+            const caja = this.cajas.create(pos.x, pos.y, 'Caja'); // Asegúrate de que 'caja_texture' esté cargado
+            caja.setSize(tamañosCajas[index], tamañosCajas[index]).setImmovable(true);
+            caja.setScale(0.4);
+            caja.collisiones = 0; // Contador de colisiones para cajas pequeñas
+        });
 
-// Crear la caja más grande en el centro
-const cajaCentro = this.cajas.create(500, 400, 'Caja'); // Asegúrate de que 'caja_texture' esté cargado
-cajaCentro.setSize(250, 250).setImmovable(true),cajaCentro.setScale(0.8);
+        // Crear la caja más grande en el centro
+        const cajaCentro = this.cajas.create(500, 400, 'Caja'); // Asegúrate de que 'caja_texture' esté cargado
+        cajaCentro.setSize(250, 250).setImmovable(true);
+        cajaCentro.setScale(0.8);
+        cajaCentro.collisiones = 0; // Contador de colisiones para la caja grande
 
- // Colisiones entre jugadores y cajas
- this.physics.add.collider(this.player1, this.cajas);
- this.physics.add.collider(this.player2, this.cajas);
-
-
+        // Colisiones entre jugadores y cajas
+        this.physics.add.collider(this.player1, this.cajas);
+        this.physics.add.collider(this.player2, this.cajas);
 
         // Escuchar ataques
-        this.input.keyboard.on('keydown-SPACE', this.ataqueAlaric, this);
+        this.input.keyboard.on('keydown-SPACE', this.intentaAtaqueAlaric, this);
         this.input.on('pointerdown', (pointer) => {
             if (pointer.leftButtonDown()) {
-                this.ataqueMagnus();
+                this.intentaAtaqueMagnus();
             }
         }, this);
 
@@ -154,10 +118,12 @@ cajaCentro.setSize(250, 250).setImmovable(true),cajaCentro.setScale(0.8);
 
         // Inicializar vida y victorias
         this.resetRound();
-
     }
 
     update() {
+        if (this.enContador) {
+            return; // Si está en el contador, no permitir movimiento
+        }
         // Movimiento de Alaric
         if (this.cursors.right.isDown) {
             this.player1.setVelocityX(350);
@@ -198,11 +164,19 @@ cajaCentro.setSize(250, 250).setImmovable(true),cajaCentro.setScale(0.8);
             this.player2.setVelocityY(0);
         }
 
-         // Verificar colisiones entre ataques y cajas
-         this.ataques.children.iterate((ataque) => {
+        // Verificar colisiones entre ataques y cajas
+        this.ataques.children.iterate((ataque) => {
             if (ataque) {
-                this.physics.add.collider(ataque, this.cajas, (ataque) => {
+                this.physics.add.collider(ataque, this.cajas, (ataque, caja) => {
                     ataque.destroy(); // Destruir el ataque al colisionar con una caja
+                    caja.collisiones++; // Incrementar el contador de colisiones
+
+                    // Verificar si la caja debe ser destruida
+                    if (caja.collisiones >= 5 && caja.scale === 0.4) { // Para las cajas pequeñas
+                        caja.destroy(); // Destruir la caja pequeña
+                    } else if (caja.collisiones >= 10 && caja.scale === 0.8) { // Para la caja grande
+                        caja.destroy(); // Destruir la caja grande
+                    }
                 });
 
                 // Verificar colisiones con jugadores
@@ -215,6 +189,18 @@ cajaCentro.setSize(250, 250).setImmovable(true),cajaCentro.setScale(0.8);
                 }
             }
         });
+    }
+
+    intentaAtaqueAlaric() {
+        if (this.puedeDisparar) {
+            this.ataqueAlaric();
+        }
+    }
+
+    intentaAtaqueMagnus() {
+        if (this.puedeDisparar) {
+            this.ataqueMagnus();
+        }
     }
 
     ataqueAlaric() {
@@ -271,9 +257,19 @@ cajaCentro.setSize(250, 250).setImmovable(true),cajaCentro.setScale(0.8);
         this.vidaActualMagnus = 10;
         this.updateVida();
         this.updateVidaMagnus();
+        
+        // Restablecer posiciones
+        this.player1.setPosition(this.posicionAlaric.x, this.posicionAlaric.y);
+        this.player2.setPosition(this.posicionMagnus.x, this.posicionMagnus.y);
     
         // Actualiza el texto de victorias
         this.textoVictorias.setText(`Alaric: ${this.victoriasAlaric} - Magnus: ${this.victoriasMagnus}`);
+        
+        // Iniciar el contador
+        this.puedeDisparar = false; // Desactiva el disparo al reiniciar la ronda
+        this.contador = 3;
+        this.mostrarContador();
+        this.iniciarContador();
     }
 
     updateVida() {
@@ -284,5 +280,28 @@ cajaCentro.setSize(250, 250).setImmovable(true),cajaCentro.setScale(0.8);
     updateVidaMagnus() {
         const frameIndex = 10 - this.vidaActualMagnus; // Asumiendo que hay 11 frames
         this.vidaMagnus.setFrame(frameIndex);
+    }
+
+    mostrarContador() {
+        this.textoContador = this.add.text(500, 400, this.contador, {
+            fontSize: '128px',
+            fill: '#ffffff'
+        }).setOrigin(0.5, 0.5);
+    }
+
+    iniciarContador() {
+        this.enContador = true; // Activar el estado de contador
+        const contadorInterval = setInterval(() => {
+            if (this.contador > 0) {
+                this.textoContador.setText(this.contador);
+                this.contador--;
+            } else {
+                clearInterval(contadorInterval);
+                this.textoContador.destroy(); // Eliminar el texto del contador
+                this.enContador = false; // Desactivar el estado de contador
+                this.puedeDisparar = true; // Reactiva el disparo al terminar el contador
+                this.jugar(); // Iniciar el juego
+            }
+        }, 1000); // Disminuye el contador cada segundo
     }
 }
