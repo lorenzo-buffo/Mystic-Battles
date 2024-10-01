@@ -37,10 +37,11 @@ export class Preloader extends Scene
         this.load.spritesheet('barraVida', 'spritesheetVida.png', { frameWidth: 98, frameHeight: 21 });
         this.load.spritesheet('alaric_walk', 'spritesheet2.2.png', { frameWidth: 68, frameHeight: 70 });
         this.load.spritesheet('magnus_walk', 'spritesheetmagnus.png', { frameWidth: 60, frameHeight: 60 });
+        this.load.image('Caja', 'caja.png');
 }
-    
-    
 
+    
+    
     create ()
     {
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
@@ -48,5 +49,5 @@ export class Preloader extends Scene
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('MainMenu');
-        }
     }
+}

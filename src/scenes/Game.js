@@ -3,7 +3,6 @@ import { Scene } from 'phaser';
 export class Game extends Scene {
     constructor() {
         super('Game');
-        this.initVariables();
     }
 
     initVariables() {
@@ -15,6 +14,8 @@ export class Game extends Scene {
     }
 
     create() {
+        this.initVariables(); // Inicializa las variables al crear la escena
+
         this.cameras.main.setBackgroundColor(0x006400);
         
         // Crear animaciones para Alaric
@@ -24,21 +25,6 @@ export class Game extends Scene {
             frameRate: 10,
             repeat: -1
         });
-
-        // Crear animaciones para Magnus
-        this.anims.create({
-            key: 'move_magnus',
-            frames: this.anims.generateFrameNumbers("magnus_walk", { start: 0, end: 7 }),
-            frameRate: 5,
-            repeat: -1
-        });
-
-        // Crear a Alaric
-        this.player1 = this.physics.add.sprite(100, 900, "alaric_walk");
-        this.player1.setScale(1);
-        this.player1.setBounce(0);
-        this.player1.setCollideWorldBounds(true);
-        this.player1.play('move');
 
         // Crear animaciones de caminar para Alaric
         this.anims.create({
@@ -55,12 +41,20 @@ export class Game extends Scene {
             repeat: -1
         });
 
-        // Crear a Magnus
-        this.player2 = this.physics.add.sprite(900, 100, "magnus_walk");
-        this.player2.setScale(1);
-        this.player2.setBounce(0);
-        this.player2.setCollideWorldBounds(true);
-        this.player2.play('move_magnus');
+        // Crear a Alaric
+        this.player1 = this.physics.add.sprite(100, 900, "alaric_walk");
+        this.player1.setScale(1);
+        this.player1.setBounce(0);
+        this.player1.setCollideWorldBounds(true);
+        this.player1.play('move');
+
+        // Crear animaciones para Magnus
+        this.anims.create({
+            key: 'move_magnus',
+            frames: this.anims.generateFrameNumbers("magnus_walk", { start: 0, end: 7 }),
+            frameRate: 5,
+            repeat: -1
+        });
 
         // Crear animaciones de caminar para Magnus
         this.anims.create({
@@ -77,6 +71,13 @@ export class Game extends Scene {
             repeat: -1
         });
 
+        // Crear a Magnus
+        this.player2 = this.physics.add.sprite(900, 100, "magnus_walk");
+        this.player2.setScale(1);
+        this.player2.setBounce(0);
+        this.player2.setCollideWorldBounds(true);
+        this.player2.play('move_magnus');
+
         // Configurar controles
         this.cursors = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -90,12 +91,33 @@ export class Game extends Scene {
         // Colisiones entre jugadores
         this.physics.add.collider(this.player1, this.player2);
 
-        // Crear un cuadrado inmóvil
-        this.cuadrado = this.add.rectangle(500, 400, 300, 300, 0x6666ff);
-        this.physics.add.existing(this.cuadrado);
-        this.physics.add.collider(this.player1, this.cuadrado);
-        this.physics.add.collider(this.player2, this.cuadrado);
-        this.cuadrado.body.setImmovable(true);
+        // Crear grupo de cajas
+this.cajas = this.physics.add.group();
+
+// Crear las cajas en las esquinas
+const tamañosCajas = [100, 100, 100, 100]; // Tamaños de las cajas en las esquinas
+const posicionesEsquinas = [
+    { x: 150, y: 200 }, // Esquina superior izquierda
+    { x: 850, y: 200 }, // Esquina superior derecha
+    { x: 150, y: 600 }, // Esquina inferior izquierda
+    { x: 850, y: 600 }  // Esquina inferior derecha
+];
+
+ // Crear cajas en las esquinas
+ posicionesEsquinas.forEach((pos, index) => {
+    const caja = this.cajas.create(pos.x, pos.y, 'Caja'); // Asegúrate de que 'caja_texture' esté cargado
+    caja.setSize(tamañosCajas[index], tamañosCajas[index]).setImmovable(true), caja.setScale(0.4);
+});
+
+// Crear la caja más grande en el centro
+const cajaCentro = this.cajas.create(500, 400, 'Caja'); // Asegúrate de que 'caja_texture' esté cargado
+cajaCentro.setSize(250, 250).setImmovable(true),cajaCentro.setScale(0.8);
+
+ // Colisiones entre jugadores y cajas
+ this.physics.add.collider(this.player1, this.cajas);
+ this.physics.add.collider(this.player2, this.cajas);
+
+
 
         // Escuchar ataques
         this.input.keyboard.on('keydown-SPACE', this.ataqueAlaric, this);
@@ -125,13 +147,14 @@ export class Game extends Scene {
         }).setOrigin(0.5, 0.5);
 
         // Mostrar el texto de victorias
-        this.textoVictorias = this.add.text(400, 20, 'Alaric: 0 - Magnus: 0', {
+        this.textoVictorias = this.add.text(500, 20, 'Alaric: 0 - Magnus: 0', {
             fontSize: '24px',
             fill: '#ffffff',
         }).setOrigin(0.5, 0.5);
 
         // Inicializar vida y victorias
         this.resetRound();
+
     }
 
     update() {
@@ -175,9 +198,14 @@ export class Game extends Scene {
             this.player2.setVelocityY(0);
         }
 
-        // Verificar colisiones entre ataques
-        this.ataques.children.iterate((ataque) => {
+         // Verificar colisiones entre ataques y cajas
+         this.ataques.children.iterate((ataque) => {
             if (ataque) {
+                this.physics.add.collider(ataque, this.cajas, (ataque) => {
+                    ataque.destroy(); // Destruir el ataque al colisionar con una caja
+                });
+
+                // Verificar colisiones con jugadores
                 if (this.physics.overlap(ataque, this.player2) && ataque.getData('owner') === 'Alaric') {
                     ataque.destroy();
                     this.recibeDañoMagnus();
@@ -231,7 +259,7 @@ export class Game extends Scene {
             this.victoriasAlaric++;
             this.resetRound();
         }
-
+    
         // Verifica si alguien ha ganado el juego
         if (this.victoriasAlaric >= this.rondasGanadas || this.victoriasMagnus >= this.rondasGanadas) {
             this.scene.start('GameOver'); // Cambia a la escena GameOver
@@ -243,7 +271,7 @@ export class Game extends Scene {
         this.vidaActualMagnus = 10;
         this.updateVida();
         this.updateVidaMagnus();
-
+    
         // Actualiza el texto de victorias
         this.textoVictorias.setText(`Alaric: ${this.victoriasAlaric} - Magnus: ${this.victoriasMagnus}`);
     }
