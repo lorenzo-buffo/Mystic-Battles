@@ -56,16 +56,18 @@ export class Game extends Scene {
         ];
 
         posicionesEsquinas.forEach((pos, index) => {
-            const caja = this.cajas.create(pos.x, pos.y, 'Caja');
-            caja.setSize(tamañosCajas[index], tamañosCajas[index]).setImmovable(true);
-            caja.setScale(0.4);
+            const caja = this.cajas.create(pos.x, pos.y, 'caja_spritesheet');
+            caja.setImmovable(true);
+            caja.setScale(1);
             caja.collisiones = 0;
+            caja.setFrame(0);  // Inicializar la caja en el primer frame
         });
-
-        const cajaCentro = this.cajas.create(500, 400, 'Caja');
-        cajaCentro.setSize(250, 250).setImmovable(true);
-        cajaCentro.setScale(0.8);
+        
+        const cajaCentro = this.cajas.create(500, 400, 'caja_spritesheet');
+        cajaCentro.setImmovable(true);
+        cajaCentro.setScale(2);
         cajaCentro.collisiones = 0;
+        cajaCentro.setFrame(0);  // Inicializar la caja en el primer frame
 
         this.physics.add.collider(this.player1, this.cajas);
         this.physics.add.collider(this.player2, this.cajas);
@@ -147,13 +149,14 @@ export class Game extends Scene {
                 this.physics.add.collider(ataque, this.cajas, (ataque, caja) => {
                     ataque.destroy();
                     caja.collisiones++;
-
-                    if (caja.collisiones >= 5 && caja.scale === 0.4) {
+                
+                    if (caja.collisiones < 5) {
+                        // Cambiar el frame de la caja para mostrar su daño
+                        caja.setFrame(caja.collisiones);
+                    } else {
+                        // Destruir la caja si llega al número máximo de colisiones
                         caja.destroy();
-                        this.generarPocion(caja.x, caja.y); // Generar poción
-                    } else if (caja.collisiones >= 10 && caja.scale === 0.8) {
-                        caja.destroy();
-                        this.generarPocion(caja.x, caja.y); // Generar poción
+                        this.generarPocion(caja.x, caja.y);  // Generar poción si la caja se destruye
                     }
                 });
 

@@ -37,7 +37,7 @@ export class Preloader extends Scene
         this.load.spritesheet('barraVida', 'spritesheetVida.png', { frameWidth: 98, frameHeight: 21 });
         this.load.spritesheet('alaric_walk', 'spritesheet2.2.png', { frameWidth: 68, frameHeight: 70 });
         this.load.spritesheet('magnus_walk', 'spritesheetmagnus.png', { frameWidth: 60, frameHeight: 60 });
-        this.load.image('Caja', 'caja.png');
+        this.load.spritesheet('caja_spritesheet', 'spritesheetcajachica.png', { frameWidth: 51, frameHeight: 56 });
         this.load.image('pocion', 'pocion.png');
      
 }
