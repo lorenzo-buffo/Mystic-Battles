@@ -15,19 +15,22 @@ export class GameOver extends Scene
         // Texto de Game Over
         this.add.text(400, 100, 'Game Over', {
             fontSize: '64px',
-            fill: '#ffffff'
+            fill: '#ffffff',
+            fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
     
         // Texto que indica quién ganó
         this.add.text(400, 200, `${ganador} ha ganado!`, {
             fontSize: '32px',
-            fill: '#ffffff'
+            fill: '#ffffff',
+            fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
     
         // Mostrar el número de victorias
         this.add.text(400, 250, `Victorias - Alaric: ${victoriasAlaric} - Magnus: ${victoriasMagnus}`, {
             fontSize: '24px',
-            fill: '#ffffff'
+            fill: '#ffffff',
+            fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
     
         // Mostrar la imagen del ganador

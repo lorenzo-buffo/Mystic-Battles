@@ -10,7 +10,7 @@ export class MainMenu extends Scene {
         const background = this.add.image(512, 384, 'background');
         const logo = this.add.image(512, 300, 'logo');
         const title = this.add.text(512, 460, '¡Hora de elegir un modo de juego!', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
+            fontFamily: 'Pixelify Sans', fontSize: 50, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
         }).setOrigin(0.5);
@@ -20,8 +20,8 @@ export class MainMenu extends Scene {
 
         // AGREGAR BOTON MODO VS
         const vsButton = this.add.text(200, 600, "Modo VS", {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+            fontFamily: 'Pixelify Sans', fontSize: 36, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 7,
             align: 'center'
         }).setOrigin(0.5);
         vsButton.setInteractive({ cursor: 'pointer' });
@@ -33,13 +33,13 @@ export class MainMenu extends Scene {
         });
         vsButton.on('pointerdown', () => {
             selectedMode = 'VS';
-            showPopup('Has seleccionado el Modo VS');
+            showPopup('Has seleccionado el Modo VS' );
         });
 
         // AGREGAR BOTON MODO COOP
         const coopButton = this.add.text(750, 600, "Modo Cooperativo", {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+            fontFamily: 'Pixelify Sans', fontSize: 36, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 7,
             align: 'center'
         }).setOrigin(0.5);
         coopButton.setInteractive({ cursor: 'pointer' });
@@ -63,13 +63,13 @@ export class MainMenu extends Scene {
         popupBackground.fillRect(-300, -250, 600, 500); // Cambia el tamaño aquí
 
         const popupText = this.add.text(0, -150, '', {
-            fontFamily: 'Arial', fontSize: 32, color: '#ffffff' // Ajusta el tamaño del texto si es necesario
+            fontFamily: 'Pixelify Sans', fontSize: 32, color: '#ffffff' // Ajusta el tamaño del texto si es necesario
         }).setOrigin(0.5);
 
         // Botón para comenzar
         const startButton = this.add.text(0, 100, 'Comenzar', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+            fontFamily: 'Pixelify Sans', fontSize: 36, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 7,
             align: 'center'
         }).setOrigin(0.5);
         startButton.setInteractive({ cursor: 'pointer' });

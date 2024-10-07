@@ -75,7 +75,8 @@ export class Game extends Scene {
         this.textoAlaric = this.add.text(100, 30, 'ALARIC', {
             fontSize: '20px',
             fill: '#ffffff',
-            align: 'center'
+            align: 'center',
+            fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
 
         //crea barra de vida para magnus
@@ -83,13 +84,15 @@ export class Game extends Scene {
         this.textoMagnus = this.add.text(900, 30, 'MAGNUS', {
             fontSize: '20px',
             fill: '#ffffff',
-            align: 'center'
+            align: 'center',
+            fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
 
         //crea un texto para determinarn como va la partida
         this.textoVictorias = this.add.text(500, 20, 'Alaric: 0 - Magnus: 0', {
             fontSize: '24px',
             fill: '#ffffff',
+            fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
 
         this.pociones = this.physics.add.group();
@@ -265,7 +268,7 @@ export class Game extends Scene {
         posicionesEsquinas.forEach((pos, index) => {
             const caja = this.cajas.create(pos.x, pos.y, 'caja_spritesheet');
             caja.setImmovable(true);
-            caja.setScale(1);
+            caja.setScale(1.5);
             caja.collisiones = 0;
             caja.setFrame(0);  // Inicializar la caja en el primer frame
         });
@@ -368,7 +371,27 @@ export class Game extends Scene {
                 pocion.destroy();
             });
         }
+
+        // 10% de probabilidad de generar una poción de ataque rara
+    else if (probabilidad < 1) {
+        const pocionAtaque = this.physics.add.sprite(x, y, 'pocion_ataque');
+        pocionAtaque.setInteractive();
+        pocionAtaque.setScale(0.2);
+        
+        // Colisión con Alaric
+        this.physics.add.overlap(this.player1, pocionAtaque, () => {
+            this.generarRayos(this.player1);
+            pocionAtaque.destroy();
+        });
+
+        // Colisión con Magnus
+        this.physics.add.overlap(this.player2, pocionAtaque, () => {
+            this.generarRayos(this.player2);
+            pocionAtaque.destroy();
+        });
     }
+}
+    
 
     //los personajes se curan 3 puntos de vida al colisionar con la pocion.
     recibirCuracion(player) {
@@ -382,4 +405,63 @@ export class Game extends Scene {
             console.log("Magnus ha recibido curación! Vida actual:", this.vidaActualMagnus);
         }
     }
+
+    generarRayos(player) {
+        const numRayos = 5; // Número de rayos a generar
+        const espaciado = 200; // Espaciado vertical entre los rayos
+        const rayos = [];
+        const posiciones = []; // Para almacenar posiciones usadas
+    
+        for (let i = 0; i < numRayos; i++) {
+            let altura;
+    
+            // Elegir una altura única para cada rayo
+            do {
+                altura = Phaser.Math.Between(50, this.cameras.main.height - 50); // Altura aleatoria
+            } while (posiciones.includes(altura));
+    
+            posiciones.push(altura); // Agregar altura usada
+    
+            const lado = Math.random() < 0.5 ? 'izquierda' : 'derecha';
+    
+            // Ajustar la posición de la señal para que esté más adentro
+            const posicionX = lado === 'izquierda' ? -50+ 50 : this.cameras.main.width + 50 - 50; // 50 píxeles dentro de los bordes
+    
+            // Mostrar señal de emergencia
+            const señal = this.add.sprite(
+                posicionX,
+                altura,
+                'Emergencia' // Asegúrate de tener esta imagen cargada
+            ).setOrigin(0.5, 0.5);
+            señal.setScale(0.1); // Ajustar el tamaño de la señal si es necesario
+    
+            // Destruir la señal después de 1 segundo
+            this.time.delayedCall(1000, () => {
+                señal.destroy();
+            });
+    
+            // Generar el rayo después de un breve retraso
+            this.time.delayedCall(1000, () => {
+                const rayo = this.add.sprite(
+                    lado === 'izquierda' ? -50 : this.cameras.main.width + 50,
+                    altura,
+                    'Rayo'
+                ).setOrigin(0.5, 0.5);
+    
+                // Animar el rayo para que se mueva hacia el centro
+                const targetX = lado === 'izquierda' ? this.cameras.main.width + 50 : -50;
+                this.tweens.add({
+                    targets: rayo,
+                    x: targetX,
+                    duration: 1000,
+                    ease: 'Linear',
+                    onComplete: () => {
+                        rayo.destroy(); // Destruir el rayo después de que se mueve fuera de la pantalla
+                    }
+                });
+    
+                rayos.push(rayo); // Guardar el rayo en un array si necesitas manipularlo después
+            });
+        }
+    }    
 }
