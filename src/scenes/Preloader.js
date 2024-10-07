@@ -34,6 +34,8 @@ export class Preloader extends Scene
         this.load.image('logo', 'logo.png');
         this.load.image('ataque', 'fuego.png');
         this.load.image('exit', 'exit.png');
+        this.load.image('Alaric3', 'Alaric3.png')
+        this.load.image('Magnus3', 'Magnus3.png')
         this.load.spritesheet('barraVida', 'spritesheetVida.png', { frameWidth: 98, frameHeight: 21 });
         this.load.spritesheet('alaric_walk', 'spritesheet2.2.png', { frameWidth: 68, frameHeight: 70 });
         this.load.spritesheet('magnus_walk', 'spritesheetmagnus.png', { frameWidth: 60, frameHeight: 60 });
