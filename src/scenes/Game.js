@@ -354,11 +354,13 @@ export class Game extends Scene {
     //Genera una poción con una probabilidad del 50% que cura a los personajes
     generarPocion(x, y) {
         const probabilidad = Math.random();
-        if (probabilidad < 0.5) { // 50% de probabilidad de generar una poción
-            const pocion = this.physics.add.sprite(x, y, 'pocion'); // Asegúrate de tener una imagen de poción cargada
+    
+        if (probabilidad < 0.5) { // 50% de probabilidad de generar una poción de curación
+            const pocion = this.physics.add.sprite(x, y, 'pocion'); 
             pocion.setInteractive();
-            pocion.setScale(0.2);
-            
+            pocion.setScale(1);
+            pocion.play('pocion_appear'); // Reproduce la animación
+    
             // Agregar colisión con Alaric
             this.physics.add.overlap(this.player1, pocion, () => {
                 this.recibirCuracion(this.player1);
@@ -370,27 +372,26 @@ export class Game extends Scene {
                 this.recibirCuracion(this.player2);
                 pocion.destroy();
             });
+    
+        } else if (probabilidad < 1) {  // 50% de probabilidad de generar una poción de ataque rara
+            const pocionAtaque = this.physics.add.sprite(x, y, 'pocion_ataque');
+            pocionAtaque.setInteractive();
+            pocionAtaque.setScale(1);
+            pocionAtaque.play('pocion_ataque_appear'); // Reproduce la animación
+    
+            // Colisión con Alaric
+            this.physics.add.overlap(this.player1, pocionAtaque, () => {
+                this.generarRayos(this.player1);
+                pocionAtaque.destroy();
+            });
+    
+            // Colisión con Magnus
+            this.physics.add.overlap(this.player2, pocionAtaque, () => {
+                this.generarRayos(this.player2);
+                pocionAtaque.destroy();
+            });
         }
-
-        // 10% de probabilidad de generar una poción de ataque rara
-    else if (probabilidad < 1) {
-        const pocionAtaque = this.physics.add.sprite(x, y, 'pocion_ataque');
-        pocionAtaque.setInteractive();
-        pocionAtaque.setScale(0.2);
-        
-        // Colisión con Alaric
-        this.physics.add.overlap(this.player1, pocionAtaque, () => {
-            this.generarRayos(this.player1);
-            pocionAtaque.destroy();
-        });
-
-        // Colisión con Magnus
-        this.physics.add.overlap(this.player2, pocionAtaque, () => {
-            this.generarRayos(this.player2);
-            pocionAtaque.destroy();
-        });
     }
-}
     
 
     //los personajes se curan 3 puntos de vida al colisionar con la pocion.

@@ -40,10 +40,12 @@ export class Preloader extends Scene
         this.load.spritesheet('alaric_walk', 'spritesheet2.2.png', { frameWidth: 68, frameHeight: 70 });
         this.load.spritesheet('magnus_walk', 'spritesheetmagnus.png', { frameWidth: 60, frameHeight: 60 });
         this.load.spritesheet('caja_spritesheet', 'spritesheetcajachica.png', { frameWidth: 51, frameHeight: 56 });
-        this.load.image('pocion', 'pocion.png');
-        this.load.image('pocion_ataque', 'pocion ataque.png');
+        this.load.spritesheet('pocion', 'sspocionchiquita.png', { frameWidth: 38, frameHeight: 47 });
+        this.load.spritesheet('pocion_ataque', 'sspocionrayo.png', { frameWidth: 38, frameHeight: 47 });
         this.load.image('Rayo', 'rayo.png');
         this.load.image('Emergencia', 'emergencia.png');
+        /*this.load.spritesheet('attack', 'boladefuegospriteshet.png', { frameWidth: 50, frameHeight: 45 });
+        this.load.spritesheet('hit', 'explocionss39x36.png', { frameWidth: 39, frameHeight: 36 });*/
      
 }
 
@@ -99,6 +101,37 @@ export class Preloader extends Scene
             frameRate: 5,
             repeat: -1
         });
+
+
+        // Crear animación para la poción
+        this.anims.create({
+            key: 'pocion_appear',
+            frames: this.anims.generateFrameNumbers('pocion', { start: 0, end: 3 }),
+            frameRate: 5,  // Ajusta la velocidad de la animación según tu preferencia
+            repeat: -1     // Para que se repita de forma indefinida
+        });
+
+        // Crear animación para la poción de ataque
+        this.anims.create({
+            key: 'pocion_ataque_appear',
+            frames: this.anims.generateFrameNumbers('pocion_ataque', { start: 0, end: 3 }),
+            frameRate: 5,  
+            repeat: -1     
+        });
+        
+        /*this.anims.create({
+            key: 'attackAnim',
+            frames: this.anims.generateFrameNumbers('attack', { start: 0, end: 5 }), // Asegúrate de poner el rango correcto
+            frameRate: 10,
+            repeat: 0 // No repetir, la animación se reproduce una vez
+        });
+
+         this.anims.create({
+        key: 'hitAnim',
+        frames: this.anims.generateFrameNumbers('hit', { start: 0, end: 3 }), // Ajustar según el spritesheet de impacto
+        frameRate: 10,
+        repeat: 0
+    });*/
 
     }
 }
