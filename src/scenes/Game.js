@@ -330,7 +330,8 @@ export class Game extends Scene {
     mostrarContador() {
         this.textoContador = this.add.text(500, 400, this.contador, {
             fontSize: '128px',
-            fill: '#ffffff'
+            fill: '#ffffff',
+            fontFamily:'Pixelify Sans'
         }).setOrigin(0.5, 0.5);
     }
 
@@ -376,7 +377,7 @@ export class Game extends Scene {
         } else if (probabilidad < 1) {  // 50% de probabilidad de generar una poción de ataque rara
             const pocionAtaque = this.physics.add.sprite(x, y, 'pocion_ataque');
             pocionAtaque.setInteractive();
-            pocionAtaque.setScale(1);
+            pocionAtaque.setScale(1.2);
             pocionAtaque.play('pocion_ataque_appear'); // Reproduce la animación
     
             // Colisión con Alaric
@@ -408,71 +409,40 @@ export class Game extends Scene {
     }
 
     generarRayos(player) {
-        const numRayos = 5; // Número de rayos a generar
-        const espaciado = 100; // Espaciado vertical entre los rayos
+        const numRayos = 5; 
+        const espaciado = 100; 
         const rayos = [];
-        const posiciones = []; // Para almacenar posiciones usadas
-        const offset = 20; // Ajusta este valor para el margen deseado
-    
-        // Calcular el rango de alturas permitido
+        const posiciones = new Set(); 
+        const offset = 20; 
         const maxAltura = this.cameras.main.height - 50 - espaciado * (numRayos - 1);
     
         for (let i = 0; i < numRayos; i++) {
             let altura;
-    
-            // Elegir una altura única para cada rayo
             do {
-                altura = Phaser.Math.Between(50, maxAltura); // Altura aleatoria
-            } while (posiciones.includes(altura)); // Asegurarse de que no se repita
+                altura = Phaser.Math.Between(50, maxAltura);
+            } while (posiciones.has(altura));
     
-            // Agregar la posición usada
-            posiciones.push(altura); // Agregar altura usada
-    
-            // Ajustar la altura del rayo para el espaciado
-            altura += i * espaciado; // Espaciado vertical
+            posiciones.add(altura); 
+            altura += i * espaciado; 
     
             const lado = Math.random() < 0.5 ? 'izquierda' : 'derecha';
+            const posicionX = lado === 'izquierda' ? offset : this.cameras.main.width - offset;
     
-            // Ajustar la posición de la señal para que esté cerca del borde de la pantalla
-            const posicionX = lado === 'izquierda' 
-                ? offset // Unos pocos píxeles dentro del borde izquierdo
-                : this.cameras.main.width - offset; // Unos pocos píxeles dentro del borde derecho
+            const señal = this.add.sprite(posicionX, altura, 'Emergencia').setOrigin(0.5, 0.5).setScale(0.1);
+            this.time.delayedCall(1000, () => señal.destroy());
     
-            // Mostrar señal de emergencia
-            const señal = this.add.sprite(
-                posicionX,
-                altura,
-                'Emergencia' // Asegúrate de tener esta imagen cargada
-            ).setOrigin(0.5, 0.5);
-            señal.setScale(0.1); // Ajustar el tamaño de la señal si es necesario
-    
-            // Destruir la señal después de 1 segundo
             this.time.delayedCall(1000, () => {
-                señal.destroy();
-            });
-    
-            // Generar el rayo después de un breve retraso
-            this.time.delayedCall(1000, () => {
-                const rayo = this.add.sprite(
-                    lado === 'izquierda' ? -50 : this.cameras.main.width + 50,
-                    altura,
-                    'Rayo'
-                ).setOrigin(0.5, 0.5);
-    
-                // Animar el rayo para que se mueva hacia el centro
+                const rayo = this.add.sprite(lado === 'izquierda' ? -50 : this.cameras.main.width + 50, altura, 'Rayo').setOrigin(0.5, 0.5);
                 const targetX = lado === 'izquierda' ? this.cameras.main.width + 50 : -50;
                 this.tweens.add({
                     targets: rayo,
                     x: targetX,
                     duration: 1000,
                     ease: 'Linear',
-                    onComplete: () => {
-                        rayo.destroy(); // Destruir el rayo después de que se mueve fuera de la pantalla
-                    }
+                    onComplete: () => rayo.destroy()
                 });
-    
-                rayos.push(rayo); // Guardar el rayo en un array si necesitas manipularlo después
+                rayos.push(rayo);
             });
         }
-    } 
+    }
 }
