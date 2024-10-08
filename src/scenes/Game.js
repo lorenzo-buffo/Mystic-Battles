@@ -409,24 +409,34 @@ export class Game extends Scene {
 
     generarRayos(player) {
         const numRayos = 5; // Número de rayos a generar
-        const espaciado = 200; // Espaciado vertical entre los rayos
+        const espaciado = 100; // Espaciado vertical entre los rayos
         const rayos = [];
         const posiciones = []; // Para almacenar posiciones usadas
+        const offset = 20; // Ajusta este valor para el margen deseado
+    
+        // Calcular el rango de alturas permitido
+        const maxAltura = this.cameras.main.height - 50 - espaciado * (numRayos - 1);
     
         for (let i = 0; i < numRayos; i++) {
             let altura;
     
             // Elegir una altura única para cada rayo
             do {
-                altura = Phaser.Math.Between(50, this.cameras.main.height - 50); // Altura aleatoria
-            } while (posiciones.includes(altura));
+                altura = Phaser.Math.Between(50, maxAltura); // Altura aleatoria
+            } while (posiciones.includes(altura)); // Asegurarse de que no se repita
     
+            // Agregar la posición usada
             posiciones.push(altura); // Agregar altura usada
+    
+            // Ajustar la altura del rayo para el espaciado
+            altura += i * espaciado; // Espaciado vertical
     
             const lado = Math.random() < 0.5 ? 'izquierda' : 'derecha';
     
-            // Ajustar la posición de la señal para que esté más adentro
-            const posicionX = lado === 'izquierda' ? -50+ 50 : this.cameras.main.width + 50 - 50; // 50 píxeles dentro de los bordes
+            // Ajustar la posición de la señal para que esté cerca del borde de la pantalla
+            const posicionX = lado === 'izquierda' 
+                ? offset // Unos pocos píxeles dentro del borde izquierdo
+                : this.cameras.main.width - offset; // Unos pocos píxeles dentro del borde derecho
     
             // Mostrar señal de emergencia
             const señal = this.add.sprite(
@@ -464,5 +474,5 @@ export class Game extends Scene {
                 rayos.push(rayo); // Guardar el rayo en un array si necesitas manipularlo después
             });
         }
-    }    
+    } 
 }
