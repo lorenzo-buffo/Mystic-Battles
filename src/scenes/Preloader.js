@@ -32,6 +32,7 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
         this.load.image('logo', 'logo.png');
+        this.load.image('mapa', 'mapafinal.png');
         this.load.spritesheet('ataque', 'boladefuegospritesheet.png', {
             frameWidth: 50, // Ancho de cada frame del spritesheet
             frameHeight: 45 // Alto de cada frame del spritesheet
@@ -49,7 +50,7 @@ export class Preloader extends Scene
         this.load.spritesheet('caja_spritesheet', 'spritesheetcajachica.png', { frameWidth: 51, frameHeight: 56 });
         this.load.spritesheet('pocion', 'sspocionchiquita.png', { frameWidth: 38, frameHeight: 47 });
         this.load.spritesheet('pocion_ataque', 'sspocionrayo.png', { frameWidth: 38, frameHeight: 47 });
-        this.load.image('Rayo', 'rayo.png');
+        this.load.image('Rayo', 'Alaric3.png');
         this.load.image('Emergencia', 'emergencia.png');
         /*this.load.spritesheet('attack', 'boladefuegospriteshet.png', { frameWidth: 50, frameHeight: 45 });
         this.load.spritesheet('hit', 'explocionss39x36.png', { frameWidth: 39, frameHeight: 36 });*/

@@ -18,6 +18,7 @@ export class Game extends Scene {
         this.puedeMoverse = true; // Inicializar aquí
         this.posicionAlaric = { x: 100, y: 900 };
         this.posicionMagnus = { x: 900, y: 100 };
+        this.cooldown = false; // Inicializar cooldown
     }
 
     create() {
@@ -96,6 +97,7 @@ export class Game extends Scene {
         }).setOrigin(0.5, 0.5);
 
         this.pociones = this.physics.add.group();
+        this.rayos = this.physics.add.group();
 
         //reinicia la ronda
         this.resetRound();
@@ -178,19 +180,29 @@ export class Game extends Scene {
         });
     }
 
-    //Intenta realizar un ataque con Alaric si puede disparar
-    intentaAtaqueAlaric() {
-        if (this.puedeDisparar) {
-            this.ataqueAlaric();
-        }
+   // Intenta realizar un ataque con Alaric si puede disparar
+intentaAtaqueAlaric() {
+    if (this.puedeDisparar && !this.cooldown) {
+        this.ataqueAlaric();
+        this.iniciarCooldown();
     }
+}
 
-    //lo mismo para magnus
-    intentaAtaqueMagnus() {
-        if (this.puedeDisparar) {
-            this.ataqueMagnus();
-        }
+// Intenta realizar un ataque con Magnus
+intentaAtaqueMagnus() {
+    if (this.puedeDisparar && !this.cooldown) {
+        this.ataqueMagnus();
+        this.iniciarCooldown();
     }
+}
+
+// Inicia el cooldown
+iniciarCooldown() {
+    this.cooldown = true;
+    this.time.delayedCall(350, () => {
+        this.cooldown = false; // Reinicia el cooldown después de 1 segundo
+    });
+}
 
     //lanza el ataque de alaric hacia la posicion de magnus con una velocidad determinada
    // Lanza el ataque de Alaric
@@ -431,30 +443,33 @@ reproducirExplosion(x, y) {
     }
 
     generarRayos(player) {
-        const numRayos = 5; 
-        const espaciado = 100; 
-        const rayos = [];
+        const numRayos = 4; 
+        const espaciado = 200; 
         const posiciones = new Set(); 
         const offset = 20; 
         const maxAltura = this.cameras.main.height - 50 - espaciado * (numRayos - 1);
-    
+        
         for (let i = 0; i < numRayos; i++) {
             let altura;
             do {
                 altura = Phaser.Math.Between(50, maxAltura);
             } while (posiciones.has(altura));
-    
+        
             posiciones.add(altura); 
             altura += i * espaciado; 
-    
+            
             const lado = Math.random() < 0.5 ? 'izquierda' : 'derecha';
             const posicionX = lado === 'izquierda' ? offset : this.cameras.main.width - offset;
-    
+        
             const señal = this.add.sprite(posicionX, altura, 'Emergencia').setOrigin(0.5, 0.5).setScale(0.1);
-            this.time.delayedCall(1000, () => señal.destroy());
-    
+            
+            // Crear el rayo justo después de que la señal desaparezca
             this.time.delayedCall(1000, () => {
+                señal.destroy(); // Destruir la señal
+    
                 const rayo = this.add.sprite(lado === 'izquierda' ? -50 : this.cameras.main.width + 50, altura, 'Rayo').setOrigin(0.5, 0.5);
+                this.rayos.add(rayo); // Agregar el rayo al grupo
+    
                 const targetX = lado === 'izquierda' ? this.cameras.main.width + 50 : -50;
                 this.tweens.add({
                     targets: rayo,
@@ -463,8 +478,25 @@ reproducirExplosion(x, y) {
                     ease: 'Linear',
                     onComplete: () => rayo.destroy()
                 });
-                rayos.push(rayo);
             });
         }
+        this.physics.add.overlap(this.player1, this.rayos, (player, rayo) => {
+            this.vidaActual -= 4; // Cambia el daño a 4 solo para los rayos
+            this.updateVida(); // Actualiza la barra de vida de Alaric
+            console.log("Alaric recibe daño por rayo! Vida actual:", this.vidaActual);
+            this.tintRed(this.player1); // Efecto visual
+            rayo.destroy(); // Destruir el rayo después de colisionar
+            this.checkForGameOver(); // Verificar si el juego ha terminado
+        });
+        
+        this.physics.add.overlap(this.player2, this.rayos, (player, rayo) => {
+            this.vidaActualMagnus -= 4; // Cambia el daño a 4 solo para los rayos
+            this.updateVidaMagnus(); // Actualiza la barra de vida de Magnus
+            console.log("Magnus recibe daño por rayo! Vida actual:", this.vidaActualMagnus);
+            this.tintRed(this.player2); // Efecto visual
+            rayo.destroy(); // Destruir el rayo después de colisionar
+            this.checkForGameOver(); // Verificar si el juego ha terminado
+        });
     }
+    
 }
