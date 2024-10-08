@@ -32,7 +32,14 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
         this.load.image('logo', 'logo.png');
-        this.load.image('ataque', 'fuego.png');
+        this.load.spritesheet('ataque', 'boladefuegospritesheet.png', {
+            frameWidth: 50, // Ancho de cada frame del spritesheet
+            frameHeight: 45 // Alto de cada frame del spritesheet
+        });
+        this.load.spritesheet('explosion', 'explosionss39x36.png', {
+            frameWidth: 39, // Ajusta el ancho según tu spritesheet
+            frameHeight: 36 // Ajusta el alto según tu spritesheet
+        });
         this.load.image('exit', 'exit.png');
         this.load.image('Alaric3', 'Alaric3.png')
         this.load.image('Magnus3', 'Magnus3.png')
@@ -118,6 +125,22 @@ export class Preloader extends Scene
             frameRate: 5,  
             repeat: -1     
         });
+
+        this.anims.create({
+            key: 'ataqueAnim',
+            frames: this.anims.generateFrameNumbers('ataque', { start: 0, end: 5 }), // Ajusta los índices según tu spritesheet
+            frameRate: 10,
+            repeat: -1,
+        });
+        // Animación de explosión
+        this.anims.create({
+            key: 'explosionAnim',
+            frames: this.anims.generateFrameNumbers('explosion', { start: 0, end: 5 }), // Ajusta los índices
+            frameRate: 10,
+            repeat: false
+        });
+      }
+    }
         
         /*this.anims.create({
             key: 'attackAnim',
@@ -133,5 +156,5 @@ export class Preloader extends Scene
         repeat: 0
     });*/
 
-    }
-}
+    
+

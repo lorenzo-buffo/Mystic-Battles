@@ -150,6 +150,7 @@ export class Game extends Scene {
         this.ataques.children.iterate((ataque) => {
             if (ataque) {
                 this.physics.add.collider(ataque, this.cajas, (ataque, caja) => {
+                    this.reproducirExplosion(ataque.x, ataque.y); // Llamar a la función de explosión
                     ataque.destroy();
                     caja.collisiones++;
                 
@@ -165,9 +166,11 @@ export class Game extends Scene {
 
                 //Maneja el daño que reciben los personajes al colisionar con un ataque
                 if (this.physics.overlap(ataque, this.player2) && ataque.getData('owner') === 'Alaric') {
+                    this.reproducirExplosion(ataque.x, ataque.y);
                     ataque.destroy();
                     this.recibeDañoMagnus();
                 } else if (this.physics.overlap(ataque, this.player1) && ataque.getData('owner') === 'Magnus') {
+                    this.reproducirExplosion(ataque.x, ataque.y);
                     ataque.destroy();
                     this.recibeDaño();
                 }
@@ -190,26 +193,45 @@ export class Game extends Scene {
     }
 
     //lanza el ataque de alaric hacia la posicion de magnus con una velocidad determinada
+   // Lanza el ataque de Alaric
     ataqueAlaric() {
-        const ataque1 = this.ataques.create(this.player1.x, this.player1.y, 'ataque');
-        ataque1.setData('owner', 'Alaric');
-        const direction = new Phaser.Math.Vector2(this.player2.x - this.player1.x, this.player2.y - this.player1.y);
-        direction.normalize();
-        ataque1.setVelocity(direction.x * 500, direction.y * 500);
-        ataque1.setScale(0.1);
-        console.log("Alaric ataca!");
-    }
+    const ataque1 = this.ataques.create(this.player1.x, this.player1.y, 'ataque');
+    ataque1.play('ataqueAnim'); // Reproducir la animación del ataque
+    ataque1.setData('owner', 'Alaric');
+   
+
+    const direction = new Phaser.Math.Vector2(this.player2.x - this.player1.x, this.player2.y - this.player1.y);
+    direction.normalize();
+    ataque1.setVelocity(direction.x * 500, direction.y * 500);
+    ataque1.setScale(1);
+    console.log("Alaric ataca!");
+}
+
 
     //lanza el ataque de magnus hacia la posicion de alaric con una velocidad determinada
+    // Lanza el ataque de Magnus
     ataqueMagnus() {
-        const ataque = this.ataques.create(this.player2.x, this.player2.y, 'ataque');
-        ataque.setData('owner', 'Magnus');
-        const direction = new Phaser.Math.Vector2(this.player1.x - this.player2.x, this.player1.y - this.player2.y);
-        direction.normalize();
-        ataque.setVelocity(direction.x * 500, direction.y * 500);
-        ataque.setScale(0.1);
-        console.log("Magnus ataca!");
-    }
+    const ataque = this.ataques.create(this.player2.x, this.player2.y, 'ataque');
+    ataque.play('ataqueAnim'); // Reproducir la animación del ataque
+    ataque.setData('owner', 'Magnus');
+
+    const direction = new Phaser.Math.Vector2(this.player1.x - this.player2.x, this.player1.y - this.player2.y);
+    direction.normalize();
+    ataque.setVelocity(direction.x * 500, direction.y * 500);
+    ataque.setScale(1);
+    console.log("Magnus ataca!");
+}
+
+reproducirExplosion(x, y) {
+    const explosion = this.add.sprite(x, y, 'explosion'); // Crear el sprite de explosión
+    explosion.play('explosionAnim'); // Reproducir la animación de explosión
+
+    // Destruir la explosión después de que termine la animación
+    explosion.on('animationcomplete', () => {
+        explosion.destroy(); // Destruir el sprite de explosión
+    });
+}
+
 
     //maneja el daño que recibe magnus
     recibeDaño() {
