@@ -53,8 +53,8 @@ export class Preloader extends Scene
         this.load.spritesheet('magnus_walk', 'spritesheetmagnus.png', { frameWidth: 60, frameHeight: 60 });
         this.load.spritesheet('caja_spritesheet', 'spritesheetcajachica.png', { frameWidth: 51, frameHeight: 56 });
         this.load.spritesheet('pocion', 'sspocionchiquita.png', { frameWidth: 38, frameHeight: 47 });
-        this.load.spritesheet('pocion_ataque', 'sspocionrayo.png', { frameWidth: 38, frameHeight: 47 });
-        this.load.image('pocionElectrica', 'rayo.png')
+        this.load.spritesheet('pocion_ataque', 'warningss.png', { frameWidth: 38, frameHeight: 47 });
+        this.load.spritesheet('pocionElectrica', 'sspocionrayo.png', { frameWidth: 38, frameHeight: 47 });
         this.load.image('Rayo', 'rayocostado.png');
         this.load.image('Emergencia', 'emergencia.png');
      
@@ -130,12 +130,21 @@ export class Preloader extends Scene
             repeat: -1     
         });
 
+        // Crear animación para la poción de ataque
+        this.anims.create({
+            key: 'pocionElectrica_appear',
+            frames: this.anims.generateFrameNumbers('pocion_ataque', { start: 0, end: 3 }),
+            frameRate: 5,  
+            repeat: -1     
+        });
+
         this.anims.create({
             key: 'ataqueAnim',
             frames: this.anims.generateFrameNumbers('ataque', { start: 0, end: 5 }), // Ajusta los índices según tu spritesheet
             frameRate: 10,
             repeat: -1,
         });
+
         // Animación de explosión
         this.anims.create({
             key: 'explosionAnim',

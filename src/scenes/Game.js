@@ -453,7 +453,7 @@ generarPocion(x, y) {
     } else if (probabilidad < 0.75) {  // 25% de probabilidad de generar una poción de ataque rara
         const pocionAtaque = this.physics.add.sprite(x, y, 'pocion_ataque'); // Crea la poción de ataque
         pocionAtaque.setInteractive(); // Habilita la interacción
-        pocionAtaque.setScale(1.2); // Establece la escala
+        pocionAtaque.setScale(1); // Establece la escala
         pocionAtaque.play('pocion_ataque_appear'); // Reproduce la animación de aparición
 
         // Colisión con Alaric
@@ -468,9 +468,10 @@ generarPocion(x, y) {
             pocionAtaque.destroy(); // Destruye la poción de ataque
         });
     } else { // 25% de probabilidad de generar la poción eléctrica
-        const pocionElectrica = this.physics.add.image(x, y, 'pocionElectrica'); // Crea la poción eléctrica
+        const pocionElectrica = this.physics.add.sprite(x, y, 'pocionElectrica'); // Crea la poción de ataque
         pocionElectrica.setInteractive(); // Habilita la interacción
         pocionElectrica.setScale(1); // Establece la escala
+        pocionElectrica.play('pocionElectrica_appear'); // Reproduce la animación de aparición
 
         // Colisión con Alaric
         this.physics.add.overlap(this.player1, pocionElectrica, () => {
