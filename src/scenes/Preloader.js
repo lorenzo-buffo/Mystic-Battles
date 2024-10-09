@@ -50,10 +50,8 @@ export class Preloader extends Scene
         this.load.spritesheet('caja_spritesheet', 'spritesheetcajachica.png', { frameWidth: 51, frameHeight: 56 });
         this.load.spritesheet('pocion', 'sspocionchiquita.png', { frameWidth: 38, frameHeight: 47 });
         this.load.spritesheet('pocion_ataque', 'sspocionrayo.png', { frameWidth: 38, frameHeight: 47 });
-        this.load.image('Rayo', 'Alaric3.png');
+        this.load.image('Rayo', 'rayocostado.png');
         this.load.image('Emergencia', 'emergencia.png');
-        /*this.load.spritesheet('attack', 'boladefuegospriteshet.png', { frameWidth: 50, frameHeight: 45 });
-        this.load.spritesheet('hit', 'explocionss39x36.png', { frameWidth: 39, frameHeight: 36 });*/
      
 }
 
@@ -142,20 +140,3 @@ export class Preloader extends Scene
         });
       }
     }
-        
-        /*this.anims.create({
-            key: 'attackAnim',
-            frames: this.anims.generateFrameNumbers('attack', { start: 0, end: 5 }), // Asegúrate de poner el rango correcto
-            frameRate: 10,
-            repeat: 0 // No repetir, la animación se reproduce una vez
-        });
-
-         this.anims.create({
-        key: 'hitAnim',
-        frames: this.anims.generateFrameNumbers('hit', { start: 0, end: 3 }), // Ajustar según el spritesheet de impacto
-        frameRate: 10,
-        repeat: 0
-    });*/
-
-    
-
