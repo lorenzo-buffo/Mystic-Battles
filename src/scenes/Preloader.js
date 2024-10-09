@@ -41,6 +41,10 @@ export class Preloader extends Scene
             frameWidth: 39, // Ajusta el ancho según tu spritesheet
             frameHeight: 36 // Ajusta el alto según tu spritesheet
         });
+        this.load.spritesheet('ataqueElectrico', 'electricidadss.png', {
+            frameWidth: 50, // Ancho de cada frame del spritesheet
+            frameHeight: 45 // Alto de cada frame del spritesheet
+        });
         this.load.image('exit', 'exit.png');
         this.load.image('Alaric3', 'Alaric3.png')
         this.load.image('Magnus3', 'Magnus3.png')
@@ -50,6 +54,7 @@ export class Preloader extends Scene
         this.load.spritesheet('caja_spritesheet', 'spritesheetcajachica.png', { frameWidth: 51, frameHeight: 56 });
         this.load.spritesheet('pocion', 'sspocionchiquita.png', { frameWidth: 38, frameHeight: 47 });
         this.load.spritesheet('pocion_ataque', 'sspocionrayo.png', { frameWidth: 38, frameHeight: 47 });
+        this.load.image('pocionElectrica', 'rayo.png')
         this.load.image('Rayo', 'rayocostado.png');
         this.load.image('Emergencia', 'emergencia.png');
      
@@ -137,6 +142,13 @@ export class Preloader extends Scene
             frames: this.anims.generateFrameNumbers('explosion', { start: 0, end: 5 }), // Ajusta los índices
             frameRate: 10,
             repeat: false
+        });
+        //animacion ataque electrico
+        this.anims.create({
+            key: 'ataqueElectricoAnim',
+            frames: this.anims.generateFrameNumbers('ataqueElectrico', { start: 0, end: 5 }), // Ajusta los índices según tu spritesheet
+            frameRate: 10,
+            repeat: -1,
         });
       }
     }
