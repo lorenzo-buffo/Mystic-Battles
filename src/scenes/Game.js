@@ -184,33 +184,41 @@ update() {
 
 // Intenta realizar un ataque con Alaric
 intentaAtaqueAlaric() {
-    if (this.puedeDisparar && !this.cooldown) { // Verifica si se puede disparar y si no hay cooldown
+    if (this.puedeDisparar && !this.cooldownAlaric) { // Verifica si Alaric puede disparar y si no hay cooldown
         if (this.puedeUsarAtaqueElectricoAlaric) {
             this.ataqueElectricoAlaric(); // Realiza ataque eléctrico
         } else {
             this.ataqueAlaric(); // Realiza ataque normal
         }
-        this.iniciarCooldown(); // Inicia el cooldown
+        this.iniciarCooldownAlaric(); // Inicia el cooldown de Alaric
     }
 }
 
 // Intenta realizar un ataque con Magnus
 intentaAtaqueMagnus() {
-    if (this.puedeDisparar && !this.cooldown) { // Verifica si se puede disparar y si no hay cooldown
+    if (this.puedeDisparar && !this.cooldownMagnus) { // Verifica si Magnus puede disparar y si no hay cooldown
         if (this.puedeUsarAtaqueElectricoMagnus) {
             this.ataqueElectricoMagnus(); // Realiza ataque eléctrico
         } else {
             this.ataqueMagnus(); // Realiza ataque normal
         }
-        this.iniciarCooldown(); // Inicia el cooldown
+        this.iniciarCooldownMagnus(); // Inicia el cooldown de Magnus
     }
 }
 
-// Inicia el cooldown
-iniciarCooldown() {
-    this.cooldown = true; // Activa el estado de cooldown
+// Inicia el cooldown de Alaric
+iniciarCooldownAlaric() {
+    this.cooldownAlaric = true; // Activa el estado de cooldown para Alaric
     this.time.delayedCall(350, () => {
-        this.cooldown = false; // Reinicia el cooldown después de 350 ms
+        this.cooldownAlaric = false; // Reinicia el cooldown de Alaric después de 350 ms
+    });
+}
+
+// Inicia el cooldown de Magnus
+iniciarCooldownMagnus() {
+    this.cooldownMagnus = true; // Activa el estado de cooldown para Magnus
+    this.time.delayedCall(350, () => {
+        this.cooldownMagnus = false; // Reinicia el cooldown de Magnus después de 350 ms
     });
 }
 
@@ -342,14 +350,14 @@ crearCajas() {
     posicionesEsquinas.forEach((pos) => {
         const caja = this.cajas.create(pos.x, pos.y, 'caja_spritesheet'); // Crea la caja
         caja.setImmovable(true); // La caja no se puede mover
-        caja.setScale(1.5); // Escala de la caja
+        caja.setScale(1); // Escala de la caja
         caja.collisiones = 0; // Inicializa el contador de colisiones
         caja.setFrame(0); // Inicializa la caja en el primer frame
     });
 
     const cajaCentro = this.cajas.create(500, 400, 'caja_spritesheet'); // Crea la caja central
     cajaCentro.setImmovable(true); // La caja no se puede mover
-    cajaCentro.setScale(2); // Escala de la caja central
+    cajaCentro.setScale(1.5); // Escala de la caja central
     cajaCentro.collisiones = 0; // Inicializa el contador de colisiones
     cajaCentro.setFrame(0); // Inicializa la caja en el primer frame
 }

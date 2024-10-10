@@ -51,7 +51,7 @@ export class Preloader extends Scene
         this.load.spritesheet('barraVida', 'spritesheetVida.png', { frameWidth: 98, frameHeight: 21 });
         this.load.spritesheet('alaric_walk', 'spritesheet2.2.png', { frameWidth: 68, frameHeight: 70 });
         this.load.spritesheet('magnus_walk', 'spritesheetmagnus.png', { frameWidth: 60, frameHeight: 60 });
-        this.load.spritesheet('caja_spritesheet', 'spritesheetcajachica.png', { frameWidth: 51, frameHeight: 56 });
+        this.load.spritesheet('caja_spritesheet', 'cajasscompleto.png', { frameWidth: 50, frameHeight: 56 });
         this.load.spritesheet('pocion', 'sspocionchiquita.png', { frameWidth: 38, frameHeight: 47 });
         this.load.spritesheet('pocion_ataque', 'warningss.png', { frameWidth: 38, frameHeight: 47 });
         this.load.spritesheet('pocionElectrica', 'sspocionrayo.png', { frameWidth: 38, frameHeight: 47 });
@@ -133,7 +133,7 @@ export class Preloader extends Scene
         // Crear animación para la poción de ataque
         this.anims.create({
             key: 'pocionElectrica_appear',
-            frames: this.anims.generateFrameNumbers('pocion_ataque', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('pocionElectrica', { start: 0, end: 3 }),
             frameRate: 5,  
             repeat: -1     
         });
