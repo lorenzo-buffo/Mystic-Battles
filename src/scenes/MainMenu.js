@@ -123,5 +123,21 @@ export class MainMenu extends Scene {
         };
 
         setSceneVisible(true); // Asegúrate de que los elementos sean visibles al inicio
+
+        const Ajustes = this.add.image(950, 50, 'configuracion'). setScale(0.3)
+        Ajustes.setInteractive({ cursor: 'pointer' });
+         // Añadir eventos para achicar el botón al pasar el cursor
+         Ajustes.on('pointerover', () => {
+            Ajustes.setScale(0.25); 
+        });
+        Ajustes.on('pointerout', () => {
+            Ajustes.setScale(0.3); 
+        });
+        Ajustes.on('pointerdown', () => {
+            this.scene.start('Idioma');
+        });
     }
+    update(){
+        
+    } 
 }

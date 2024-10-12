@@ -105,181 +105,134 @@ create() {
     this.resetRound();
     }
 
-update() {
-    if (!this.puedeMoverse || this.enContador) {
-        return; // No permitir movimiento
-    }
-        
-    //controla el movimiento de alaric segun la tecla presionada
-    if (this.cursors.right.isDown) {
-        this.player1.setVelocityX(350);
-        this.player1.anims.play('walk_right', true);
-    } else if (this.cursors.left.isDown) {
-        this.player1.setVelocityX(-350);
-        this.player1.anims.play('walk_left', true);
-    } else {
-        this.player1.setVelocityX(0);
-         this.player1.anims.stop();
-    }
-
-    if (this.cursors.up.isDown) {
-        this.player1.setVelocityY(-350);
-    } else if (this.cursors.down.isDown) {
-        this.player1.setVelocityY(350);
-    } else {
-        this.player1.setVelocityY(0);
-    }
-
-    //lo mismo para magnus
-    if (this.cursors2.right.isDown) {
-        this.player2.setVelocityX(350);
-        this.player2.anims.play('walk_right_magnus', true);
-    } else if (this.cursors2.left.isDown) {
-        this.player2.setVelocityX(-350);
-        this.player2.anims.play('walk_left_magnus', true);
-    } else {
-        this.player2.setVelocityX(0);
-        this.player2.anims.stop();
-    }
-
-    if (this.cursors2.up.isDown) {
-        this.player2.setVelocityY(-350);
-    } else if (this.cursors2.down.isDown) {
-        this.player2.setVelocityY(350);
-    } else {
-        this.player2.setVelocityY(0);
-    }
-
-    //interacciones y colisiones de los ataques
-    this.ataques.children.iterate((ataque) => {
-        if (ataque) {
-            this.physics.add.collider(ataque, this.cajas, (ataque, caja) => {
-                this.reproducirExplosion(ataque.x, ataque.y); // Llamar a la función de explosión
-                ataque.destroy();
-                caja.collisiones++;
-                
-                if (caja.collisiones < 5) {
-                    // Cambiar el frame de la caja para mostrar su daño
-                    caja.setFrame(caja.collisiones);
-                } else {
-                    // Destruir la caja si llega al número máximo de colisiones
-                    caja.destroy();
-                    this.generarPocion(caja.x, caja.y);  // Generar poción si la caja se destruye
+    update() {
+        if (!this.puedeMoverse || this.enContador) {
+            return; // No permitir movimiento
+        }
+            
+        // Controla el movimiento de Alaric
+        if (this.cursors.right.isDown) {
+            this.player1.setVelocityX(350);
+            this.player1.anims.play('walk_right', true);
+        } else if (this.cursors.left.isDown) {
+            this.player1.setVelocityX(-350);
+            this.player1.anims.play('walk_left', true);
+        } else {
+            this.player1.setVelocityX(0);
+            this.player1.anims.stop();
+        }
+    
+        if (this.cursors.up.isDown) {
+            this.player1.setVelocityY(-350);
+        } else if (this.cursors.down.isDown) {
+            this.player1.setVelocityY(350);
+        } else {
+            this.player1.setVelocityY(0);
+        }
+    
+        // Controla el movimiento de Magnus
+        if (this.cursors2.right.isDown) {
+            this.player2.setVelocityX(350);
+            this.player2.anims.play('walk_right_magnus', true);
+        } else if (this.cursors2.left.isDown) {
+            this.player2.setVelocityX(-350);
+            this.player2.anims.play('walk_left_magnus', true);
+        } else {
+            this.player2.setVelocityX(0);
+            this.player2.anims.stop();
+        }
+    
+        if (this.cursors2.up.isDown) {
+            this.player2.setVelocityY(-350);
+        } else if (this.cursors2.down.isDown) {
+            this.player2.setVelocityY(350);
+        } else {
+            this.player2.setVelocityY(0);
+        }
+    
+        // Interacciones y colisiones de los ataques
+        this.ataques.children.iterate((ataque) => {
+            if (ataque) {
+                this.physics.add.collider(ataque, this.cajas, (ataque, caja) => {
+                    this.reproducirExplosion(ataque.x, ataque.y); // Llamar a la función de explosión
+                    ataque.destroy();
+                    caja.collisiones++;
+                    
+                    if (caja.collisiones < 5) {
+                        // Cambiar el frame de la caja para mostrar su daño
+                        caja.setFrame(caja.collisiones);
+                    } else {
+                        // Destruir la caja si llega al número máximo de colisiones
+                        caja.destroy();
+                        this.generarPocion(caja.x, caja.y);  // Generar poción si la caja se destruye
+                    }
+                });
+    
+                // Maneja el daño que reciben los personajes al colisionar con un ataque
+                if (this.physics.overlap(ataque, this.player2) && ataque.getData('owner') === 'Alaric') {
+                    this.reproducirExplosion(ataque.x, ataque.y);
+                    ataque.destroy();
+                    this.recibeDañoMagnus();
+                } else if (this.physics.overlap(ataque, this.player1) && ataque.getData('owner') === 'Magnus') {
+                    this.reproducirExplosion(ataque.x, ataque.y);
+                    ataque.destroy();
+                    this.recibeDaño();
                 }
-            });
-
-            //Maneja el daño que reciben los personajes al colisionar con un ataque
-            if (this.physics.overlap(ataque, this.player2) && ataque.getData('owner') === 'Alaric') {
-                this.reproducirExplosion(ataque.x, ataque.y);
-                ataque.destroy();
-                this.recibeDañoMagnus();
-            } else if (this.physics.overlap(ataque, this.player1) && ataque.getData('owner') === 'Magnus') {
-                this.reproducirExplosion(ataque.x, ataque.y);
-                ataque.destroy();
-                this.recibeDaño();
             }
-        }
-    });
-}
-
-// Intenta realizar un ataque con Alaric
-intentaAtaqueAlaric() {
-    if (this.puedeDisparar && !this.cooldownAlaric) { // Verifica si Alaric puede disparar y si no hay cooldown
-        if (this.puedeUsarAtaqueElectricoAlaric) {
-            this.ataqueElectricoAlaric(); // Realiza ataque eléctrico
-        } else {
-            this.ataqueAlaric(); // Realiza ataque normal
-        }
-        this.iniciarCooldownAlaric(); // Inicia el cooldown de Alaric
+        });
     }
-}
-
-// Intenta realizar un ataque con Magnus
-intentaAtaqueMagnus() {
-    if (this.puedeDisparar && !this.cooldownMagnus) { // Verifica si Magnus puede disparar y si no hay cooldown
-        if (this.puedeUsarAtaqueElectricoMagnus) {
-            this.ataqueElectricoMagnus(); // Realiza ataque eléctrico
-        } else {
-            this.ataqueMagnus(); // Realiza ataque normal
-        }
-        this.iniciarCooldownMagnus(); // Inicia el cooldown de Magnus
+    
+    // Función genérica para realizar un ataque
+    realizaAtaque(jugador, tipoAtaque) {
+        const ataque = this.ataques.create(jugador.x, jugador.y, tipoAtaque === 'electrico' ? 'ataqueElectrico' : 'ataque');
+        ataque.play(tipoAtaque === 'electrico' ? 'ataqueElectricoAnim' : 'ataqueAnim');
+        ataque.setData('owner', jugador === this.player1 ? 'Alaric' : 'Magnus');
+        
+        const objetivo = jugador === this.player1 ? this.player2 : this.player1;
+        const direction = new Phaser.Math.Vector2(objetivo.x - jugador.x, objetivo.y - jugador.y);
+        direction.normalize();
+    
+        const velocidad = tipoAtaque === 'electrico' ? 800 : 500;
+        ataque.setVelocity(direction.x * velocidad, direction.y * velocidad);
+        ataque.setScale(1);
+        
+        console.log(`${jugador === this.player1 ? 'Alaric' : 'Magnus'} ataca${tipoAtaque === 'electrico' ? ' eléctricamente' : ''}!`);
     }
-}
-
-// Inicia el cooldown de Alaric
-iniciarCooldownAlaric() {
-    this.cooldownAlaric = true; // Activa el estado de cooldown para Alaric
-    this.time.delayedCall(350, () => {
-        this.cooldownAlaric = false; // Reinicia el cooldown de Alaric después de 350 ms
-    });
-}
-
-// Inicia el cooldown de Magnus
-iniciarCooldownMagnus() {
-    this.cooldownMagnus = true; // Activa el estado de cooldown para Magnus
-    this.time.delayedCall(350, () => {
-        this.cooldownMagnus = false; // Reinicia el cooldown de Magnus después de 350 ms
-    });
-}
-
-// Lanza el ataque de Alaric hacia la posición de Magnus con velocidad determinada
-ataqueAlaric() {
-    const ataque1 = this.ataques.create(this.player1.x, this.player1.y, 'ataque'); // Crea el ataque
-    ataque1.play('ataqueAnim'); // Reproduce la animación del ataque
-    ataque1.setData('owner', 'Alaric'); // Establece el propietario del ataque
-
-    // Calcula la dirección del ataque
-    const direction = new Phaser.Math.Vector2(this.player2.x - this.player1.x, this.player2.y - this.player1.y);
-    direction.normalize(); // Normaliza la dirección
-    ataque1.setVelocity(direction.x * 500, direction.y * 500); // Establece la velocidad
-    ataque1.setScale(1); // Establece la escala del ataque
-    console.log("Alaric ataca!"); // Mensaje en consola
-}
-
-// Lanza el ataque de Magnus hacia la posición de Alaric con velocidad determinada
-ataqueMagnus() {
-    const ataque = this.ataques.create(this.player2.x, this.player2.y, 'ataque'); // Crea el ataque
-    ataque.play('ataqueAnim'); // Reproduce la animación del ataque
-    ataque.setData('owner', 'Magnus'); // Establece el propietario del ataque
-
-    // Calcula la dirección del ataque
-    const direction = new Phaser.Math.Vector2(this.player1.x - this.player2.x, this.player1.y - this.player2.y);
-    direction.normalize(); // Normaliza la dirección
-    ataque.setVelocity(direction.x * 500, direction.y * 500); // Establece la velocidad
-    ataque.setScale(1); // Establece la escala del ataque
-    console.log("Magnus ataca!"); // Mensaje en consola
-}
-
-// Lanza el ataque eléctrico de Alaric
-ataqueElectricoAlaric() {
-    const ataqueElectrico = this.ataques.create(this.player1.x, this.player1.y, 'ataqueElectrico'); // Crea el ataque eléctrico
-    ataqueElectrico.play('ataqueElectricoAnim'); // Reproduce la animación del ataque eléctrico
-    ataqueElectrico.setData('owner', 'Alaric'); // Establece el propietario del ataque
-    ataqueElectrico.setData('tipo', 'electrico'); // Añade el tipo
-
-    // Calcula la dirección del ataque
-    const direction = new Phaser.Math.Vector2(this.player2.x - this.player1.x, this.player2.y - this.player1.y);
-    direction.normalize(); // Normaliza la dirección
-    ataqueElectrico.setVelocity(direction.x * 800, direction.y * 800); // Establece la velocidad
-    ataqueElectrico.setScale(1); // Establece la escala del ataque eléctrico
-    console.log("Alaric ataca eléctricamente!"); // Mensaje en consola
-}
-
-// Lanza el ataque eléctrico de Magnus
-ataqueElectricoMagnus() {
-    const ataqueElectrico = this.ataques.create(this.player2.x, this.player2.y, 'ataqueElectrico'); // Crea el ataque eléctrico
-    ataqueElectrico.play('ataqueElectricoAnim'); // Reproduce la animación del ataque eléctrico
-    ataqueElectrico.setData('owner', 'Magnus'); // Establece el propietario del ataque
-    ataqueElectrico.setData('tipo', 'electrico'); // Añade el tipo
-
-    // Calcula la dirección del ataque
-    const direction = new Phaser.Math.Vector2(this.player1.x - this.player2.x, this.player1.y - this.player2.y);
-    direction.normalize(); // Normaliza la dirección
-    ataqueElectrico.setVelocity(direction.x * 800, direction.y * 800); // Establece la velocidad
-    ataqueElectrico.setScale(1); // Establece la escala del ataque eléctrico
-    console.log("Magnus ataca eléctricamente!"); // Mensaje en consola
-}
-
+    
+    // Intenta realizar un ataque con Alaric
+    intentaAtaqueAlaric() {
+        if (this.puedeDisparar && !this.cooldownAlaric) {
+            const tipoAtaque = this.puedeUsarAtaqueElectricoAlaric ? 'electrico' : 'normal';
+            this.realizaAtaque(this.player1, tipoAtaque);
+            this.iniciarCooldownAlaric();
+        }
+    }
+    
+    // Intenta realizar un ataque con Magnus
+    intentaAtaqueMagnus() {
+        if (this.puedeDisparar && !this.cooldownMagnus) {
+            const tipoAtaque = this.puedeUsarAtaqueElectricoMagnus ? 'electrico' : 'normal';
+            this.realizaAtaque(this.player2, tipoAtaque);
+            this.iniciarCooldownMagnus();
+        }
+    }
+    
+    // Inicia el cooldown de Alaric
+    iniciarCooldownAlaric() {
+        this.cooldownAlaric = true; // Activa el estado de cooldown para Alaric
+        this.time.delayedCall(350, () => {
+            this.cooldownAlaric = false; // Reinicia el cooldown de Alaric después de 350 ms
+        });
+    }
+    
+    // Inicia el cooldown de Magnus
+    iniciarCooldownMagnus() {
+        this.cooldownMagnus = true; // Activa el estado de cooldown para Magnus
+        this.time.delayedCall(350, () => {
+            this.cooldownMagnus = false; // Reinicia el cooldown de Magnus después de 350 ms
+        });
+    }
+    
 // Reproduce la animación de explosión en la posición especificada
 reproducirExplosion(x, y) {
     const explosion = this.add.sprite(x, y, 'explosion'); // Crea el sprite de explosión

@@ -57,6 +57,11 @@ export class Preloader extends Scene
         this.load.spritesheet('pocionElectrica', 'sspocionrayo.png', { frameWidth: 38, frameHeight: 47 });
         this.load.image('Rayo', 'rayocostado.png');
         this.load.image('Emergencia', 'emergencia.png');
+        this.load.image('ingles', 'ingles.png');
+        this.load.image('Español', 'Español.png');
+        this.load.image('portugues', 'portugues.png');
+        this.load.image('configuracion', 'config.png');
+        this.load.image('flecha', 'flecha.png');
      
 }
 

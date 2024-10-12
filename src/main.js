@@ -4,6 +4,7 @@ import { Game2 } from './scenes/Game2';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
+import { Idioma } from './scenes/Idioma';
 
 const config = {
     type: Phaser.AUTO,
@@ -24,6 +25,7 @@ const config = {
     scene: [ 
         Boot,
         Preloader,
+        Idioma,
         MainMenu,
         Game,
         Game2,
