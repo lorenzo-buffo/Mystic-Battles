@@ -1,46 +1,152 @@
 import { Scene } from 'phaser';
 
-export class Game2 extends Scene
-{
-    constructor ()
-    {
+export class Game2 extends Scene {
+    constructor() {
         super('Game2');
+        this.currentLevel = 0;
+        this.recipes = [
+            {
+                sequence: ['W', 'A', 'S', 'D'],
+                text: 'Recuerda bien la receta 1!',
+                imageKey: 'ingles'
+            },
+            {
+                sequence: ['D', 'S', 'A', 'W'],
+                text: 'Recuerda bien la receta 2!',
+                imageKey: 'Español'
+            },
+            // Agrega los demás niveles aquí...
+        ];
+        this.timeLimit = 10; // Tiempo límite en segundos
+        this.timerEvent = null;
+        this.userInput = [];
+        this.timerText = null; // Para mostrar el temporizador
+        this.remainingTime = 0; // Tiempo restante
     }
-    
-    create() {
-        // Agrega la imagen
-        const Receta = this.add.image(500, 300, 'ingles').setScale(0.5).setAlpha(0); // Comienza invisible
 
-        // Agrega el texto
-        const texto = this.add.text(500, 180, 'Recuerda bien la receta!', {
+    create() {
+        this.restartGame(); // Reinicia el juego al crear la escena
+    }
+
+    restartGame() {
+        this.currentLevel = 0; // Reinicia el nivel
+        this.showRecipe(); // Muestra la receta del primer nivel
+    }
+
+    showRecipe() {
+        const { text, imageKey } = this.recipes[this.currentLevel];
+
+        const recetaImage = this.add.image(500, 300, imageKey).setScale(0.5).setAlpha(0);
+        const texto = this.add.text(500, 180, text, {
             fontSize: '32px',
-            fill: '#ffffff', // Color del texto
+            fill: '#ffffff',
             align: 'center',
-            fontFamily:'Pixelify Sans'
+            fontFamily: 'Pixelify Sans'
+        }).setOrigin(0.5).setAlpha(0);
+
+        if (this.timerText) {
+            this.timerText.destroy(); // Elimina el temporizador anterior
+        }
+
+        this.timerText = this.add.text(500, 50, '', {
+            fontSize: '32px',
+            fill: '#ffffff',
+            align: 'center',
+            fontFamily: 'Pixelify Sans'
         }).setOrigin(0.5).setAlpha(0); // Comienza invisible
 
-        // Animación de entrada para la imagen y el texto
+        // Animación de entrada
         this.tweens.add({
-            targets: [Receta, texto],
+            targets: [recetaImage, texto],
             alpha: 1,
-            duration: 1000, // Duración de la animación de entrada
+            duration: 1000,
             ease: 'Power2',
             onComplete: () => {
-                // Programa la desaparición después de 5 segundos
                 this.time.delayedCall(5000, () => {
-                    // Animación de salida para la imagen y el texto
                     this.tweens.add({
-                        targets: [Receta, texto],
+                        targets: [recetaImage, texto],
                         alpha: 0,
                         duration: 1000,
                         ease: 'Power2',
                         onComplete: () => {
-                            Receta.destroy(); // Elimina la imagen de la escena
-                            texto.destroy(); // Elimina el texto de la escena
+                            recetaImage.destroy();
+                            texto.destroy();
+                            this.startTimer(); // Inicia el temporizador aquí
                         }
                     });
                 });
             }
         });
+    }
+
+    startTimer() {
+        this.userInput = []; // Reinicia la entrada del usuario
+        this.remainingTime = this.timeLimit; // Tiempo restante
+
+        this.timerText.setText(`Tiempo: ${this.remainingTime}`); // Muestra el tiempo inicial
+        this.timerText.setAlpha(1); // Hace visible el temporizador
+
+        this.timerEvent = this.time.addEvent({
+            delay: 1000, // Cada segundo
+            callback: this.updateTimer,
+            callbackScope: this,
+            loop: true
+        });
+
+        // Configura los eventos de entrada
+        this.input.keyboard.on('keydown', this.handleInput, this);
+    }
+
+    updateTimer() {
+        this.remainingTime--;
+        this.timerText.setText(`Tiempo: ${this.remainingTime}`);
+
+        if (this.remainingTime <= 0) {
+            this.timerEvent.remove(); // Detiene el temporizador
+            this.onTimeUp(); // Maneja el tiempo agotado
+        }
+    }
+
+    handleInput(event) {
+        const key = event.key.toUpperCase();
+        const currentSequence = this.recipes[this.currentLevel].sequence;
+
+        // Debugging logs
+        console.log(`Tecla presionada: ${key}`);
+        console.log(`Entrada del usuario: ${this.userInput}`);
+        console.log(`Secuencia actual: ${currentSequence}`);
+
+        if (key === currentSequence[this.userInput.length]) {
+            this.userInput.push(key);
+            console.log(`Entrada correcta: ${this.userInput}`);
+
+            // Verifica si se completó la receta
+            if (this.userInput.length === currentSequence.length) {
+                this.onRecipeComplete();
+            }
+        } else {
+            console.log('Tecla incorrecta. Intenta de nuevo.');
+            this.userInput = []; // Reinicia la entrada
+        }
+    }
+
+    onRecipeComplete() {
+        this.timerEvent.remove();
+        this.timerText.destroy(); // Elimina el temporizador actual
+
+        this.currentLevel++;
+
+        if (this.currentLevel < this.recipes.length) {
+            this.showRecipe();
+        } else {
+            console.log('¡Felicidades, completaste todos los niveles!');
+            this.scene.start('MainMenu'); // Cambia a la escena MainMenu
+        }
+    }
+
+    onTimeUp() {
+        this.input.keyboard.off('keydown', this.handleInput, this);
+        console.log('Tiempo agotado. Fin del nivel.');
+        this.scene.start('MainMenu'); // Cambia a la escena MainMenu
     }
 }

@@ -6,6 +6,7 @@ import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 import { Idioma } from './scenes/Idioma';
 
+
 const config = {
     type: Phaser.AUTO,
     width: 1024,
@@ -29,7 +30,8 @@ const config = {
         MainMenu,
         Game,
         Game2,
-        GameOver
+        GameOver,
+      
     ]
 };
 
