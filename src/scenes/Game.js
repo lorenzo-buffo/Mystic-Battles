@@ -25,8 +25,6 @@ initVariables() {
 
 create() {
      this.initVariables();
-
-    this.cameras.main.setBackgroundColor(0x006400);
     this.add.image(512, 384, 'mapa');
 
     //crear a alaric
@@ -351,14 +349,14 @@ crearCajas() {
     posicionesEsquinas.forEach((pos) => {
         const caja = this.cajas.create(pos.x, pos.y, 'caja_spritesheet'); // Crea la caja
         caja.setImmovable(true); // La caja no se puede mover
-        caja.setScale(1); // Escala de la caja
+        caja.setScale(1.5); // Escala de la caja
         caja.collisiones = 0; // Inicializa el contador de colisiones
         caja.setFrame(0); // Inicializa la caja en el primer frame
     });
 
     const cajaCentro = this.cajas.create(500, 400, 'caja_spritesheet'); // Crea la caja central
     cajaCentro.setImmovable(true); // La caja no se puede mover
-    cajaCentro.setScale(1.5); // Escala de la caja central
+    cajaCentro.setScale(2); // Escala de la caja central
     cajaCentro.collisiones = 0; // Inicializa el contador de colisiones
     cajaCentro.setFrame(0); // Inicializa la caja en el primer frame
 }
