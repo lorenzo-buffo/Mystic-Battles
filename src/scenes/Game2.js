@@ -11,7 +11,7 @@ export class Game2 extends Scene {
                 imageKey: 'ingles'
             },
             {
-                sequence: ['D', 'S', 'A', 'W'],
+                sequence: ['ARROWUP', 'ARROWDOWN', 'ARROWLEFT', 'ARROWRIGHT'],
                 text: 'Recuerda bien la receta 2!',
                 imageKey: 'Español'
             },
@@ -108,7 +108,7 @@ export class Game2 extends Scene {
     }
 
     handleInput(event) {
-        const key = event.key.toUpperCase();
+        const key = event.code; // Usa event.code para obtener el código de la tecla
         const currentSequence = this.recipes[this.currentLevel].sequence;
 
         // Debugging logs
@@ -116,15 +116,32 @@ export class Game2 extends Scene {
         console.log(`Entrada del usuario: ${this.userInput}`);
         console.log(`Secuencia actual: ${currentSequence}`);
 
-        if (key === currentSequence[this.userInput.length]) {
-            this.userInput.push(key);
-            console.log(`Entrada correcta: ${this.userInput}`);
-
-            // Verifica si se completó la receta
-            if (this.userInput.length === currentSequence.length) {
-                this.onRecipeComplete();
+        if (key === `KeyW` && currentSequence[this.userInput.length] === 'W') {
+            this.userInput.push('W');
+        } else if (key === `KeyA` && currentSequence[this.userInput.length] === 'A') {
+            this.userInput.push('A');
+        } else if (key === `KeyS` && currentSequence[this.userInput.length] === 'S') {
+            this.userInput.push('S');
+        } else if (key === `KeyD` && currentSequence[this.userInput.length] === 'D') {
+            this.userInput.push('D');
+        } else if (this.currentLevel === 1) { // Para el nivel 2
+            if (key === 'ArrowUp' && currentSequence[this.userInput.length] === 'ARROWUP') {
+                this.userInput.push('ARROWUP');
+            } else if (key === 'ArrowDown' && currentSequence[this.userInput.length] === 'ARROWDOWN') {
+                this.userInput.push('ARROWDOWN');
+            } else if (key === 'ArrowLeft' && currentSequence[this.userInput.length] === 'ARROWLEFT') {
+                this.userInput.push('ARROWLEFT');
+            } else if (key === 'ArrowRight' && currentSequence[this.userInput.length] === 'ARROWRIGHT') {
+                this.userInput.push('ARROWRIGHT');
             }
-        } else {
+        }
+
+        console.log(`Entrada correcta: ${this.userInput}`);
+
+        // Verifica si se completó la receta
+        if (this.userInput.length === currentSequence.length) {
+            this.onRecipeComplete();
+        } else if (this.userInput.length > currentSequence.length) {
             console.log('Tecla incorrecta. Intenta de nuevo.');
             this.userInput = []; // Reinicia la entrada
         }

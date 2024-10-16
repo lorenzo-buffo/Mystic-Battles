@@ -1,15 +1,29 @@
 import { Scene } from 'phaser';
-
+import { getTranslations } from '../Services/translation';
 export class Idioma extends Scene {
     constructor() {
         super('Idioma');
         this.banderaIndex = 0;  // Índice para rastrear la bandera actual
-        this.banderaTexturas = ['ingles', 'Español', 'portugues'];  // Lista de texturas de banderas
+        this.banderaTexturas = [{t:'Español',l:"es-AR"}, {t:'ingles',l: "en-US"}, {t:'portugues',l:"pt-BR"}];  // Lista de texturas de banderas
+    }
+
+    init({language}){
+        switch(language){
+            case "es-AR":
+                this.banderaIndex = 0
+                break
+            case "en-US":
+                this.banderaIndex = 1
+                break
+            case "pt-BR":
+                this.banderaIndex = 2
+                break
+        }
     }
 
     create(){
         // Agregamos la bandera inicial
-        this.bandera = this.add.image(512, 384, this.banderaTexturas[this.banderaIndex])
+        this.bandera = this.add.image(512, 384, this.banderaTexturas[this.banderaIndex].t)
                              .setScale(0.5)
                              .setInteractive({ useHandCursor: true });
 
@@ -21,6 +35,10 @@ export class Idioma extends Scene {
         // Evento para cuando el puntero sale de la bandera
         this.bandera.on('pointerout', () => {
             this.bandera.setScale(0.5);  // Vuelve al tamaño original
+        });
+        this.bandera.on('pointerdown', () => {
+           console.log ("click")
+            this.obtenerTraducciones(this.banderaTexturas[this.banderaIndex].l)
         });
 
         // Agregamos la flecha de avanzar (derecha)
@@ -71,19 +89,25 @@ export class Idioma extends Scene {
 
         // Evento para cuando se presiona el botón "exit"
         exitButton.on('pointerdown', () => {
-            this.scene.start('MainMenu');  // Cambia a la escena 'MainMenu'
+            this.scene.start('MainMenu', {language: this.language});  // Cambia a la escena 'MainMenu'
         });
 
         // Manejamos el evento de clic en la flecha derecha para avanzar
         flechaDerecha.on('pointerdown', () => {
             this.banderaIndex = (this.banderaIndex + 1) % this.banderaTexturas.length;
-            this.bandera.setTexture(this.banderaTexturas[this.banderaIndex]);
+            this.bandera.setTexture(this.banderaTexturas[this.banderaIndex].t);
         });
 
         // Manejamos el evento de clic en la flecha izquierda para retroceder
         flechaIzquierda.on('pointerdown', () => {
             this.banderaIndex = (this.banderaIndex - 1 + this.banderaTexturas.length) % this.banderaTexturas.length;
-            this.bandera.setTexture(this.banderaTexturas[this.banderaIndex]);
+            this.bandera.setTexture(this.banderaTexturas[this.banderaIndex].t);
         });
+    }
+    async obtenerTraducciones(language) {
+        this.language = language;
+       
+    
+        await getTranslations(language);
     }
 }

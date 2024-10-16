@@ -1,4 +1,6 @@
-import { DE_DE, EN_US, ES_AR, PT_BR } from '../enums/languages';
+// import { EN_US, ES_AR } from '../enums/languages';
+const ES_AR = 'es-AR';
+const EN_US = 'en-US';
 
 const PROJECT_ID = 'cm22m0m9k0002ewmloapfvv3n';
 let translations = null;
@@ -12,7 +14,7 @@ export async function getTranslations(lang, callback) {
         return callback ? callback() : false;
     }
 
-    return await fetch(`https://traduci-la-strapi.herokuapp.com/api/translations/${PROJECT_ID}/${language}`)
+    return await fetch(`https://traducila.vercel.app/api/translations/${PROJECT_ID}/${language}`)
     .then(response => response.json())
     .then(data => {
         localStorage.setItem('translations', JSON.stringify(data));
@@ -20,6 +22,10 @@ export async function getTranslations(lang, callback) {
         if(callback) callback()
     });
 }
+
+
+
+
 
 export function getPhrase(key) {
     if (!translations) {
@@ -34,6 +40,11 @@ export function getPhrase(key) {
 
     return phrase;
 }
+
+
+
+
+
 
 function isAllowedLanguge(language) {
     const allowedLanguages = [ES_AR, EN_US, PT_BR, DE_DE];

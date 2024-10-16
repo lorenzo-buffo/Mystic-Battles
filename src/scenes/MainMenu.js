@@ -1,15 +1,20 @@
 import { Scene } from 'phaser';
+import { getPhrase } from '../Services/translation';
+
 
 export class MainMenu extends Scene {
     constructor() {
         super('MainMenu');
+    }
+    init(data){
+        this.language = data.language
     }
 
     create() {
         // Crear los elementos de la escena
         const background = this.add.image(512, 384, 'background');
         const logo = this.add.image(512, 300, 'logo');
-        const title = this.add.text(512, 460, '¡Hora de elegir un modo de juego!', {
+        const title = this.add.text(512, 460, getPhrase('Hora de elegir un modo de juego.'), {
             fontFamily: 'Pixelify Sans', fontSize: 50, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
@@ -19,7 +24,7 @@ export class MainMenu extends Scene {
         let selectedMode = '';
 
         // AGREGAR BOTON MODO VS
-        const vsButton = this.add.text(200, 600, "Modo VS", {
+        const vsButton = this.add.text(200, 600, getPhrase ("Modo VS"), {
             fontFamily: 'Pixelify Sans', fontSize: 36, color: '#ffffff',
             stroke: '#000000', strokeThickness: 7,
             align: 'center'
@@ -33,11 +38,11 @@ export class MainMenu extends Scene {
         });
         vsButton.on('pointerdown', () => {
             selectedMode = 'VS';
-            showPopup('Has seleccionado el Modo VS' );
+            showPopup(getPhrase('Has seleccionado el Modo VS') );
         });
 
         // AGREGAR BOTON MODO COOP
-        const coopButton = this.add.text(750, 600, "Modo Cooperativo", {
+        const coopButton = this.add.text(750, 600,getPhrase("Modo Cooperativo"), {
             fontFamily: 'Pixelify Sans', fontSize: 36, color: '#ffffff',
             stroke: '#000000', strokeThickness: 7,
             align: 'center'
@@ -51,7 +56,7 @@ export class MainMenu extends Scene {
         });
         coopButton.on('pointerdown', () => {
             selectedMode = 'Coop';
-            showPopup('Has seleccionado el Modo Cooperativo');
+            showPopup(getPhrase('Has seleccionado el Modo Cooperativo'));
         });
 
         // CREAR UN POP-UP
@@ -67,7 +72,7 @@ export class MainMenu extends Scene {
         }).setOrigin(0.5);
 
         // Botón para comenzar
-        const startButton = this.add.text(0, 100, 'Comenzar', {
+        const startButton = this.add.text(0, 100, getPhrase('Comenzar'), {
             fontFamily: 'Pixelify Sans', fontSize: 36, color: '#ffffff',
             stroke: '#000000', strokeThickness: 7,
             align: 'center'
@@ -134,7 +139,7 @@ export class MainMenu extends Scene {
             Ajustes.setScale(0.3); 
         });
         Ajustes.on('pointerdown', () => {
-            this.scene.start('Idioma');
+            this.scene.start('Idioma',{language: this.language});
         });
     }
     update(){

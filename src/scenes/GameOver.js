@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { getPhrase } from '../Services/translation';
 
 export class GameOver extends Scene
 {
@@ -13,14 +14,14 @@ export class GameOver extends Scene
         this.cameras.main.setBackgroundColor(0x000000);
         
         // Texto de Game Over
-        this.add.text(500, 100, 'Fin del juego', {
+        this.add.text(500, 100,  getPhrase('Fin del juego'), {
             fontSize: '64px',
             fill: '#ffffff',
             fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
         
         // Texto que indica quién ganó
-        this.add.text(500, 200, `${ganador} ha ganado!`, {
+        this.add.text(500, 200,  getPhrase(`${ganador} ha ganado!`), {
             fontSize: '32px',
             fill: '#ffffff',
             fontFamily: 'Pixelify Sans',
