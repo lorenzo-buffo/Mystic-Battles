@@ -3,167 +3,186 @@ import { Scene } from 'phaser';
 export class Game2 extends Scene {
     constructor() {
         super('Game2');
-        this.currentLevel = 0;
-        this.recipes = [
-            {
-                sequence: ['W', 'A', 'S', 'D'],
-                text: 'Recuerda bien la receta 1!',
-                imageKey: 'ingles'
-            },
-            {
-                sequence: ['ARROWUP', 'ARROWDOWN', 'ARROWLEFT', 'ARROWRIGHT'],
-                text: 'Recuerda bien la receta 2!',
-                imageKey: 'Español'
-            },
-            // Agrega los demás niveles aquí...
-        ];
-        this.timeLimit = 10; // Tiempo límite en segundos
-        this.timerEvent = null;
-        this.userInput = [];
-        this.timerText = null; // Para mostrar el temporizador
-        this.remainingTime = 0; // Tiempo restante
+        this.arrayNivel = [];
+        this.arrayJugador = [];
+        this.niveles = 10; // Total de niveles
+        this.nivelActual = 0; // Nivel actual
+        this.mostrarTexto = false; // Controlar cuándo mostrar el texto
+        this.textoNivel = null; // Para almacenar el objeto de texto
+        this.mensajeIncorrecto = null; // Para almacenar el mensaje de hechizo incorrecto
+        this.puedeJugar = false; // Controlar si el jugador puede interactuar
+        this.tiempoRestante = 15; // Tiempo en segundos
+        this.textoTemporizador = null; // Para mostrar el temporizador
+        this.temporizador = null; // Evento del temporizador
+        this.textoBarraJugador = null; // Para mostrar las teclas presionadas
     }
 
     create() {
-        this.restartGame(); // Reinicia el juego al crear la escena
-    }
+        this.regenerarNiveles(); // Generar las combinaciones de letras al iniciar el juego
 
-    restartGame() {
-        this.currentLevel = 0; // Reinicia el nivel
-        this.showRecipe(); // Muestra la receta del primer nivel
-    }
-
-    showRecipe() {
-        const { text, imageKey } = this.recipes[this.currentLevel];
-
-        const recetaImage = this.add.image(500, 300, imageKey).setScale(0.5).setAlpha(0);
-        const texto = this.add.text(500, 180, text, {
+        // Inicializar el texto del temporizador
+        this.textoTemporizador = this.add.text(100, 50, `Tiempo: ${this.tiempoRestante}`, {
             fontSize: '32px',
-            fill: '#ffffff',
-            align: 'center',
-            fontFamily: 'Pixelify Sans'
-        }).setOrigin(0.5).setAlpha(0);
+            fill: '#ffffff'
+        }).setVisible(false); // Inicialmente oculto
 
-        if (this.timerText) {
-            this.timerText.destroy(); // Elimina el temporizador anterior
+        // Inicializar el texto para mostrar las teclas presionadas
+        this.textoBarraJugador = this.add.text(100, 150, '', {
+            fontSize: '32px',
+            fill: '#00ff00' // Color verde para las teclas presionadas
+        });
+
+        // Mostrar el primer array
+        this.mostrarTexto = true;
+        this.mostrarArrayNivel(this.nivelActual);
+        this.time.delayedCall(5000, this.ocultarArrayNivel, [], this);
+        this.input.keyboard.on('keydown', this.capturarLetra, this);
+    }
+
+    regenerarNiveles() {
+        this.arrayNivel = []; // Limpiar el array de niveles
+        for (let nivel = 1; nivel <= this.niveles; nivel++) {
+            const cantidadTeclas = 5 + (nivel - 1);
+            this.arrayNivel.push(this.generarArrayAleatorio(cantidadTeclas));
         }
+        console.log(this.arrayNivel); // Muestra el nuevo array en la consola
+    }
 
-        this.timerText = this.add.text(500, 50, '', {
+    mostrarArrayNivel(nivel) {
+        // Crear un texto para mostrar el array correspondiente al nivel
+        this.textoNivel = this.add.text(100, 100, `Nivel ${nivel + 1}: ${this.arrayNivel[nivel].join(', ')}`, {
             fontSize: '32px',
-            fill: '#ffffff',
-            align: 'center',
-            fontFamily: 'Pixelify Sans'
-        }).setOrigin(0.5).setAlpha(0); // Comienza invisible
-
-        // Animación de entrada
-        this.tweens.add({
-            targets: [recetaImage, texto],
-            alpha: 1,
-            duration: 1000,
-            ease: 'Power2',
-            onComplete: () => {
-                this.time.delayedCall(5000, () => {
-                    this.tweens.add({
-                        targets: [recetaImage, texto],
-                        alpha: 0,
-                        duration: 1000,
-                        ease: 'Power2',
-                        onComplete: () => {
-                            recetaImage.destroy();
-                            texto.destroy();
-                            this.startTimer(); // Inicia el temporizador aquí
-                        }
-                    });
-                });
-            }
+            fill: '#ffffff'
         });
     }
 
-    startTimer() {
-        this.userInput = []; // Reinicia la entrada del usuario
-        this.remainingTime = this.timeLimit; // Tiempo restante
+    ocultarArrayNivel() {
+        // Eliminar el texto de la pantalla
+        if (this.textoNivel) {
+            this.textoNivel.destroy();
+        }
+        this.mostrarTexto = false; // Cambiar el estado para no mostrar más texto
+        this.puedeJugar = true; // Permitir la interacción nuevamente
 
-        this.timerText.setText(`Tiempo: ${this.remainingTime}`); // Muestra el tiempo inicial
-        this.timerText.setAlpha(1); // Hace visible el temporizador
+        // Iniciar el temporizador
+        this.iniciarTemporizador();
 
-        this.timerEvent = this.time.addEvent({
-            delay: 1000, // Cada segundo
-            callback: this.updateTimer,
+        // Eliminar mensaje incorrecto si existe
+        if (this.mensajeIncorrecto) {
+            this.mensajeIncorrecto.destroy();
+        }
+    }
+
+    iniciarTemporizador() {
+        this.tiempoRestante = 15; // Reiniciar el temporizador a 15
+        this.textoTemporizador.setText(`Tiempo: ${this.tiempoRestante}`); // Actualizar el texto
+        this.textoTemporizador.setVisible(true); // Mostrar el temporizador
+        if (this.temporizador) {
+            this.temporizador.remove(); // Detener cualquier temporizador existente
+        }
+        this.temporizador = this.time.addEvent({
+            delay: 1000, // 1 segundo
+            callback: this.reducirTiempo,
             callbackScope: this,
             loop: true
         });
-
-        // Configura los eventos de entrada
-        this.input.keyboard.on('keydown', this.handleInput, this);
     }
 
-    updateTimer() {
-        this.remainingTime--;
-        this.timerText.setText(`Tiempo: ${this.remainingTime}`);
+    reducirTiempo() {
+        this.tiempoRestante--;
 
-        if (this.remainingTime <= 0) {
-            this.timerEvent.remove(); // Detiene el temporizador
-            this.onTimeUp(); // Maneja el tiempo agotado
+        // Actualizar el texto del temporizador
+        this.textoTemporizador.setText(`Tiempo: ${this.tiempoRestante}`);
+
+        // Si el tiempo se agota
+        if (this.tiempoRestante <= 0) {
+            this.temporizador.remove(); // Detener el temporizador
+            console.log('¡Tiempo agotado!');
+            this.nivelActual = 0; // Reiniciar al nivel 0
+            this.regenerarNiveles(); // Generar nuevas combinaciones
+            this.scene.start('MainMenu'); // Cambiar a la escena MainMenu
         }
     }
 
-    handleInput(event) {
-        const key = event.code; // Usa event.code para obtener el código de la tecla
-        const currentSequence = this.recipes[this.currentLevel].sequence;
+    capturarLetra(event) {
+        if (this.mostrarTexto) {
+            return; // Ignorar entradas mientras se muestra el texto
+        }
 
-        // Debugging logs
-        console.log(`Tecla presionada: ${key}`);
-        console.log(`Entrada del usuario: ${this.userInput}`);
-        console.log(`Secuencia actual: ${currentSequence}`);
+        if (event.key.length === 1 && event.key.match(/[a-zA-Z]/)) { // Solo letras
+            this.arrayJugador.push(event.key.toUpperCase()); // Agregar la letra al array
+            console.log(this.arrayJugador); // Muestra el array del jugador en la consola
+            
+            // Actualizar el texto de la barra con las teclas presionadas
+            this.textoBarraJugador.setText(this.arrayJugador.join(' ')); // Mostrar letras separadas por espacio
+        }
+    }
 
-        if (key === `KeyW` && currentSequence[this.userInput.length] === 'W') {
-            this.userInput.push('W');
-        } else if (key === `KeyA` && currentSequence[this.userInput.length] === 'A') {
-            this.userInput.push('A');
-        } else if (key === `KeyS` && currentSequence[this.userInput.length] === 'S') {
-            this.userInput.push('S');
-        } else if (key === `KeyD` && currentSequence[this.userInput.length] === 'D') {
-            this.userInput.push('D');
-        } else if (this.currentLevel === 1) { // Para el nivel 2
-            if (key === 'ArrowUp' && currentSequence[this.userInput.length] === 'ARROWUP') {
-                this.userInput.push('ARROWUP');
-            } else if (key === 'ArrowDown' && currentSequence[this.userInput.length] === 'ARROWDOWN') {
-                this.userInput.push('ARROWDOWN');
-            } else if (key === 'ArrowLeft' && currentSequence[this.userInput.length] === 'ARROWLEFT') {
-                this.userInput.push('ARROWLEFT');
-            } else if (key === 'ArrowRight' && currentSequence[this.userInput.length] === 'ARROWRIGHT') {
-                this.userInput.push('ARROWRIGHT');
+    update() {
+        // Verificar si la cantidad de elementos en arrayJugador es igual a la cantidad de teclas
+        const cantidadTeclas = this.arrayNivel[this.nivelActual]?.length;
+
+        if (this.puedeJugar && this.arrayJugador.length === cantidadTeclas) {
+            // Comparar arrayNivel y arrayJugador
+            const nivelCorrecto = this.arrayNivel[this.nivelActual].every((letra, index) => letra === this.arrayJugador[index]);
+
+            if (nivelCorrecto) {
+                console.log(`Nivel ${this.nivelActual + 1} completado!`);
+                this.nivelActual++;
+                this.arrayJugador = []; // Reiniciar arrayJugador para el siguiente nivel
+
+                // Limpiar la barra de letras presionadas al pasar al siguiente nivel
+                this.textoBarraJugador.setText(''); // Limpiar la barra de letras
+
+                // Ocultar el temporizador al completar el nivel
+                this.textoTemporizador.setVisible(false);
+
+                // Verificar si hay más niveles
+                if (this.nivelActual < this.niveles) {
+                    this.mostrarTexto = true;
+                    this.mostrarArrayNivel(this.nivelActual);
+                    this.puedeJugar = false; // Desactivar entrada mientras se muestra el texto
+                    this.time.delayedCall(5000, this.ocultarArrayNivel, [], this);
+                } else {
+                    console.log('¡Todos los niveles completados!');
+                }
+            } else {
+                // Mostrar mensaje de hechizo incorrecto
+                this.mostrarMensajeIncorrecto();
+                this.arrayJugador = []; // Reiniciar arrayJugador si no es correcto
+                // Limpiar la barra de letras presionadas si el hechizo es incorrecto
+                this.textoBarraJugador.setText(''); // Limpiar la barra de letras
             }
         }
-
-        console.log(`Entrada correcta: ${this.userInput}`);
-
-        // Verifica si se completó la receta
-        if (this.userInput.length === currentSequence.length) {
-            this.onRecipeComplete();
-        } else if (this.userInput.length > currentSequence.length) {
-            console.log('Tecla incorrecta. Intenta de nuevo.');
-            this.userInput = []; // Reinicia la entrada
-        }
     }
 
-    onRecipeComplete() {
-        this.timerEvent.remove();
-        this.timerText.destroy(); // Elimina el temporizador actual
+    mostrarMensajeIncorrecto() {
+        // Crear el mensaje de hechizo incorrecto
+        this.mensajeIncorrecto = this.add.text(100, 200, 'Hechizo incorrecto!', {
+            fontSize: '32px',
+            fill: '#ff0000'
+        });
 
-        this.currentLevel++;
+        // Ocultar el mensaje después de 2 segundos
+        this.time.delayedCall(2000, () => {
+            if (this.mensajeIncorrecto) {
+                this.mensajeIncorrecto.destroy();
+            }
+        });
 
-        if (this.currentLevel < this.recipes.length) {
-            this.showRecipe();
-        } else {
-            console.log('¡Felicidades, completaste todos los niveles!');
-            this.scene.start('MainMenu'); // Cambia a la escena MainMenu
-        }
+        // Aquí NO reinicias el nivel ni el arrayJugador
+        // Solo informas al jugador y permites que intente nuevamente
     }
 
-    onTimeUp() {
-        this.input.keyboard.off('keydown', this.handleInput, this);
-        console.log('Tiempo agotado. Fin del nivel.');
-        this.scene.start('MainMenu'); // Cambia a la escena MainMenu
+    generarArrayAleatorio(cantidad) {
+        const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const array = [];
+
+        for (let i = 0; i < cantidad; i++) {
+            const letraAleatoria = letras.charAt(Math.floor(Math.random() * letras.length));
+            array.push(letraAleatoria);
+        }
+
+        return array;
     }
 }

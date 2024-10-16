@@ -62,6 +62,7 @@ export class Preloader extends Scene
         this.load.image('portugues', 'portugues.png');
         this.load.image('configuracion', 'config.png');
         this.load.image('flecha', 'flecha.png');
+        this.load.image('cuadroDeTexto', 'cuadrodetexto.png'); // Asegúrate de cambiar la ruta
      
 }
 
