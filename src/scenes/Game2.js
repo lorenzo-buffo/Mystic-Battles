@@ -15,6 +15,7 @@ export class Game2 extends Scene {
         this.textoTemporizador = null; // Para mostrar el temporizador
         this.temporizador = null; // Evento del temporizador
         this.textoBarraJugador = null; // Para mostrar las teclas presionadas
+        this.vidaJugadores = 0; // Vida inicial de los jugadores
     }
 
     create() {
@@ -31,6 +32,9 @@ export class Game2 extends Scene {
             fontSize: '32px',
             fill: '#00ff00' // Color verde para las teclas presionadas
         });
+
+        // Barra de vida para los jugadores
+        this.vidaJugadoresSprite = this.add.sprite(900, 50, 'barraVida', this.vidaJugadores); // Inicialmente en frame 0
 
         // Mostrar el primer array
         this.mostrarTexto = true;
@@ -150,9 +154,25 @@ export class Game2 extends Scene {
                 // Mostrar mensaje de hechizo incorrecto
                 this.mostrarMensajeIncorrecto();
                 this.arrayJugador = []; // Reiniciar arrayJugador si no es correcto
+                
+                // Aumentar la barra de vida al cometer un error
+                this.aumentarVida();
+
                 // Limpiar la barra de letras presionadas si el hechizo es incorrecto
                 this.textoBarraJugador.setText(''); // Limpiar la barra de letras
             }
+        }
+    }
+
+    aumentarVida() {
+        // Aumentar el frame de la barra de vida
+        this.vidaJugadores++; // Aumentar la vida
+        this.vidaJugadoresSprite.setFrame(this.vidaJugadores); // Cambiar el frame del sprite
+
+        // Verificar si la vida excede el máximo (10)
+        if (this.vidaJugadores >= 10) {
+            console.log('¡Vida máxima alcanzada! Regresando al menú principal.');
+            this.scene.start('MainMenu'); // Iniciar la escena MainMenu
         }
     }
 
@@ -170,8 +190,6 @@ export class Game2 extends Scene {
             }
         });
 
-        // Aquí NO reinicias el nivel ni el arrayJugador
-        // Solo informas al jugador y permites que intente nuevamente
     }
 
     generarArrayAleatorio(cantidad) {
