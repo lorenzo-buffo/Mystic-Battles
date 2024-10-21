@@ -1,4 +1,5 @@
 import { Scene } from 'phaser';
+import { getPhrase } from '../Services/translation';
 
 export class Game2 extends Scene {
     constructor() {
@@ -21,71 +22,102 @@ export class Game2 extends Scene {
     create() {
         this.regenerarNiveles(); // Generar las combinaciones de letras al iniciar el juego
 
-        // Inicializar el texto del temporizador
-        this.textoTemporizador = this.add.text(100, 50, `Tiempo: ${this.tiempoRestante}`, {
-            fontSize: '32px',
-            fill: '#ffffff'
-        }).setVisible(false); // Inicialmente oculto
+        const cuadro = this.add.image(500, 400, "cuadro").setAlpha(0).setScale(0.5);
 
-        // Inicializar el texto para mostrar las teclas presionadas
-        this.textoBarraJugador = this.add.text(100, 150, '', {
-            fontSize: '32px',
-            fill: '#00ff00' // Color verde para las teclas presionadas
+        this.tweens.add({
+            targets: cuadro,
+            alpha: { from: 0, to: 1 },
+            scale: { from: 0.5, to: 1 },
+            duration: 1000,
+            ease: 'Power2',
+            onComplete: () => {
+                this.mostrarTexto = true;
+                this.mostrarArrayNivel(this.nivelActual);
+                this.time.delayedCall(5000, this.ocultarArrayNivel, [], this);
+            }
         });
 
-        // Barra de vida para los jugadores
-        this.vidaJugadoresSprite = this.add.sprite(900, 50, 'barraVida', this.vidaJugadores); // Inicialmente en frame 0
+        this.textoTemporizador = this.add.text(400, 50, getPhrase(`Tiempo: ${this.tiempoRestante}`), {
+            fontSize: '32px',
+            fill: '#ffffff',
+            fontFamily: 'Pixelify Sans'
+        }).setVisible(false);
 
-        // Mostrar el primer array
-        this.mostrarTexto = true;
-        this.mostrarArrayNivel(this.nivelActual);
-        this.time.delayedCall(5000, this.ocultarArrayNivel, [], this);
+        this.vidaJugadoresSprite = this.add.sprite(500, 750, 'barraVida', this.vidaJugadores).setScale(1.5);
+
+        // Inicializar el texto para mostrar las teclas presionadas
+        this.textoBarraJugador = this.add.text(500, 400, '', {
+            fontSize: '32px',
+            fill: '#00ff00', // Color verde para las teclas presionadas
+            fontFamily: 'Pixelify Sans', // Asegurarse de que la fuente coincida
+            align: 'center'
+        }).setOrigin(0.5, 0.5);
+
         this.input.keyboard.on('keydown', this.capturarLetra, this);
+        this.add.image(120, 650, 'alaricGame2');
+        this.add.image(900, 650, 'magnusGame2');
     }
 
     regenerarNiveles() {
-        this.arrayNivel = []; // Limpiar el array de niveles
+        this.arrayNivel = [];
         for (let nivel = 1; nivel <= this.niveles; nivel++) {
             const cantidadTeclas = 5 + (nivel - 1);
             this.arrayNivel.push(this.generarArrayAleatorio(cantidadTeclas));
         }
-        console.log(this.arrayNivel); // Muestra el nuevo array en la consola
+        console.log(this.arrayNivel);
     }
 
     mostrarArrayNivel(nivel) {
-        // Crear un texto para mostrar el array correspondiente al nivel
-        this.textoNivel = this.add.text(100, 100, `Nivel ${nivel + 1}: ${this.arrayNivel[nivel].join(', ')}`, {
+        this.textoNivel = this.add.text(300, 380, getPhrase(`Nivel ${nivel + 1}: ${this.arrayNivel[nivel].join(', ')}`), {
             fontSize: '32px',
-            fill: '#ffffff'
+            fill: '#ffffff',
+            fontFamily: 'Pixelify Sans'
+        }).setAlpha(0).setScale(0.5);
+
+        this.tweens.add({
+            targets: this.textoNivel,
+            alpha: { from: 0, to: 1 },
+            scale: { from: 0.5, to: 1 },
+            duration: 1000,
+            ease: 'Power2',
+            onComplete: () => {
+                this.time.delayedCall(4000, this.ocultarArrayNivel, [], this);
+            }
         });
     }
 
     ocultarArrayNivel() {
-        // Eliminar el texto de la pantalla
         if (this.textoNivel) {
-            this.textoNivel.destroy();
-        }
-        this.mostrarTexto = false; // Cambiar el estado para no mostrar más texto
-        this.puedeJugar = true; // Permitir la interacción nuevamente
+            this.tweens.add({
+                targets: this.textoNivel,
+                alpha: { from: 1, to: 0 },
+                scale: { from: 1, to: 0.5 },
+                duration: 1000,
+                ease: 'Power2',
+                onComplete: () => {
+                    this.textoNivel.destroy();
+                    this.mostrarTexto = false;
+                    this.puedeJugar = true;
 
-        // Iniciar el temporizador
-        this.iniciarTemporizador();
+                    this.iniciarTemporizador();
 
-        // Eliminar mensaje incorrecto si existe
-        if (this.mensajeIncorrecto) {
-            this.mensajeIncorrecto.destroy();
+                    if (this.mensajeIncorrecto) {
+                        this.mensajeIncorrecto.destroy();
+                    }
+                }
+            });
         }
     }
 
     iniciarTemporizador() {
-        this.tiempoRestante = 15; // Reiniciar el temporizador a 15
-        this.textoTemporizador.setText(`Tiempo: ${this.tiempoRestante}`); // Actualizar el texto
-        this.textoTemporizador.setVisible(true); // Mostrar el temporizador
+        this.tiempoRestante = 20;
+        this.textoTemporizador.setText(getPhrase(`Tiempo: ${this.tiempoRestante}`));
+        this.textoTemporizador.setVisible(true);
         if (this.temporizador) {
-            this.temporizador.remove(); // Detener cualquier temporizador existente
+            this.temporizador.remove();
         }
         this.temporizador = this.time.addEvent({
-            delay: 1000, // 1 segundo
+            delay: 1000,
             callback: this.reducirTiempo,
             callbackScope: this,
             loop: true
@@ -95,101 +127,95 @@ export class Game2 extends Scene {
     reducirTiempo() {
         this.tiempoRestante--;
 
-        // Actualizar el texto del temporizador
-        this.textoTemporizador.setText(`Tiempo: ${this.tiempoRestante}`);
+        this.textoTemporizador.setText(getPhrase(`Tiempo: ${this.tiempoRestante}`));
 
-        // Si el tiempo se agota
         if (this.tiempoRestante <= 0) {
-            this.temporizador.remove(); // Detener el temporizador
+            this.temporizador.remove();
             console.log('¡Tiempo agotado!');
-            this.nivelActual = 0; // Reiniciar al nivel 0
-            this.regenerarNiveles(); // Generar nuevas combinaciones
-            this.scene.start('MainMenu'); // Cambiar a la escena MainMenu
+
+            // Reinicia la vida del jugador
+            this.vidaJugadores = 0; 
+            this.vidaJugadoresSprite.setFrame(this.vidaJugadores); // Reinicia la barra de vida
+
+            this.nivelActual = 0;
+            this.regenerarNiveles();
+            this.scene.start('MainMenu');
         }
     }
 
     capturarLetra(event) {
         if (this.mostrarTexto) {
-            return; // Ignorar entradas mientras se muestra el texto
+            return;
         }
-
-        if (event.key.length === 1 && event.key.match(/[a-zA-Z]/)) { // Solo letras
-            this.arrayJugador.push(event.key.toUpperCase()); // Agregar la letra al array
-            console.log(this.arrayJugador); // Muestra el array del jugador en la consola
-            
-            // Actualizar el texto de la barra con las teclas presionadas
-            this.textoBarraJugador.setText(this.arrayJugador.join(' ')); // Mostrar letras separadas por espacio
+        if (event.key.length === 1 && event.key.match(/[a-zA-Z]/)) {
+            this.arrayJugador.push(event.key.toUpperCase());
+            this.textoBarraJugador.setText(this.arrayJugador.join(' '));
         }
     }
 
     update() {
-        // Verificar si la cantidad de elementos en arrayJugador es igual a la cantidad de teclas
         const cantidadTeclas = this.arrayNivel[this.nivelActual]?.length;
 
         if (this.puedeJugar && this.arrayJugador.length === cantidadTeclas) {
-            // Comparar arrayNivel y arrayJugador
             const nivelCorrecto = this.arrayNivel[this.nivelActual].every((letra, index) => letra === this.arrayJugador[index]);
 
             if (nivelCorrecto) {
-                console.log(`Nivel ${this.nivelActual + 1} completado!`);
                 this.nivelActual++;
-                this.arrayJugador = []; // Reiniciar arrayJugador para el siguiente nivel
-
-                // Limpiar la barra de letras presionadas al pasar al siguiente nivel
-                this.textoBarraJugador.setText(''); // Limpiar la barra de letras
-
-                // Ocultar el temporizador al completar el nivel
+                this.arrayJugador = [];
+                this.textoBarraJugador.setText('');
                 this.textoTemporizador.setVisible(false);
 
-                // Verificar si hay más niveles
                 if (this.nivelActual < this.niveles) {
                     this.mostrarTexto = true;
                     this.mostrarArrayNivel(this.nivelActual);
-                    this.puedeJugar = false; // Desactivar entrada mientras se muestra el texto
-                    this.time.delayedCall(5000, this.ocultarArrayNivel, [], this);
-                } else {
-                    console.log('¡Todos los niveles completados!');
+                    this.puedeJugar = false;
                 }
             } else {
-                // Mostrar mensaje de hechizo incorrecto
                 this.mostrarMensajeIncorrecto();
-                this.arrayJugador = []; // Reiniciar arrayJugador si no es correcto
-                
-                // Aumentar la barra de vida al cometer un error
+                this.arrayJugador = [];
                 this.aumentarVida();
-
-                // Limpiar la barra de letras presionadas si el hechizo es incorrecto
-                this.textoBarraJugador.setText(''); // Limpiar la barra de letras
+                this.textoBarraJugador.setText('');
             }
         }
     }
 
     aumentarVida() {
-        // Aumentar el frame de la barra de vida
-        this.vidaJugadores++; // Aumentar la vida
-        this.vidaJugadoresSprite.setFrame(this.vidaJugadores); // Cambiar el frame del sprite
+        this.vidaJugadores++;
+        this.vidaJugadoresSprite.setFrame(this.vidaJugadores);
 
-        // Verificar si la vida excede el máximo (10)
         if (this.vidaJugadores >= 10) {
-            console.log('¡Vida máxima alcanzada! Regresando al menú principal.');
-            this.scene.start('MainMenu'); // Iniciar la escena MainMenu
+            this.scene.start('MainMenu');
         }
     }
 
     mostrarMensajeIncorrecto() {
-        // Crear el mensaje de hechizo incorrecto
-        this.mensajeIncorrecto = this.add.text(100, 200, 'Hechizo incorrecto!', {
+        this.mensajeIncorrecto = this.add.text(300, 380, getPhrase('Hechizo incorrecto!'), {
             fontSize: '32px',
-            fill: '#ff0000'
-        });
+            fill: '#ff0000',
+            fontFamily: 'Pixelify Sans'
+        }).setAlpha(0);
 
-        // Ocultar el mensaje después de 2 segundos
-        this.time.delayedCall(2000, () => {
-            if (this.mensajeIncorrecto) {
-                this.mensajeIncorrecto.destroy();
+        this.tweens.add({
+            targets: this.mensajeIncorrecto,
+            alpha: { from: 0, to: 1 },
+            scale: { from: 0.5, to: 1 },
+            duration: 500,
+            ease: 'Power2',
+            onComplete: () => {
+                this.time.delayedCall(500, () => {
+                    this.tweens.add({
+                        targets: this.mensajeIncorrecto,
+                        alpha: { from: 1, to: 0 },
+                        scale: { from: 1, to: 0.5 },
+                        duration: 500,
+                        ease: 'Power2',
+                        onComplete: () => {
+                            this.mensajeIncorrecto.destroy();
+                        }
+                    });
+                });
             }
         });
-
     }
 
     generarArrayAleatorio(cantidad) {
