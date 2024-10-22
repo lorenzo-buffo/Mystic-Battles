@@ -37,13 +37,13 @@ export class Game2 extends Scene {
             }
         });
 
-        this.textoTemporizador = this.add.text(400, 50, getPhrase(`Tiempo: ${this.tiempoRestante}`), {
+        this.textoTemporizador = this.add.text(425, 50, getPhrase(`Tiempo: ${this.tiempoRestante}`), {
             fontSize: '32px',
             fill: '#ffffff',
             fontFamily: 'Pixelify Sans'
         }).setVisible(false);
 
-        this.vidaJugadoresSprite = this.add.sprite(500, 750, 'barraVida', this.vidaJugadores).setScale(1.5);
+        this.vidaJugadoresSprite = this.add.sprite(500, 150, 'barraVida', this.vidaJugadores).setScale(1.5);
 
         // Inicializar el texto para mostrar las teclas presionadas
         this.textoBarraJugador = this.add.text(500, 400, '', {
@@ -54,8 +54,15 @@ export class Game2 extends Scene {
         }).setOrigin(0.5, 0.5);
 
         this.input.keyboard.on('keydown', this.capturarLetra, this);
-        this.add.image(120, 650, 'alaricGame2');
-        this.add.image(900, 650, 'magnusGame2');
+        //Animacion de alaric
+        const alaricCoop =  this.physics.add.sprite(120, 650, 'Alariccoop').setOrigin(0.5, 0.5);
+        alaricCoop.play('alaricCoopAnim');
+        //Animacion de magnus
+        const magnusCoop =  this.physics.add.sprite(900, 650, 'Magnuscoop').setOrigin(0.5, 0.5);
+        magnusCoop.play('magnusCoopAnim');
+        //crear caldero
+        const caldero = this.physics.add.sprite(500, 660, 'caldero').setOrigin(0.5, 0.5).setScale(1.3);
+        caldero.play('calderoAnim');
     }
 
     regenerarNiveles() {

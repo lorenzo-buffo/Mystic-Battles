@@ -36,9 +36,9 @@ export class GameOver extends Scene
         
         // Mostrar la imagen del ganador
         if (ganador === 'Alaric') {
-            this.add.image(500, 350, 'Alaric3').setOrigin(0.5, 0.5).setScale(1.5);
+            this.add.image(500, 500, 'alaricGame2').setOrigin(0.5, 0.5);
         } else if (ganador === 'Magnus') {
-            this.add.image(500, 350, 'Magnus3').setOrigin(0.5, 0.5).setScale(1.5);
+            this.add.image(500, 500, 'magnusGame2').setOrigin(0.5, 0.5);
         }
         
         // Opción para reiniciar el juego al hacer clic

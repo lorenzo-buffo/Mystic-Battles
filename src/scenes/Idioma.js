@@ -22,10 +22,11 @@ export class Idioma extends Scene {
     }
 
     create(){
+        const background = this.add.image(512, 384, 'menup');
         // Agregamos la bandera inicial
         this.bandera = this.add.image(512, 384, this.banderaTexturas[this.banderaIndex].t)
-                             .setScale(0.5)
-                             .setInteractive({ useHandCursor: true });
+        .setScale(0.5)
+        .setInteractive({ useHandCursor: true });
 
         // Evento para cuando el puntero pasa por encima de la bandera
         this.bandera.on('pointerover', () => {
@@ -43,8 +44,8 @@ export class Idioma extends Scene {
 
         // Agregamos la flecha de avanzar (derecha)
         let flechaDerecha = this.add.image(750, 384, 'flecha')
-                                   .setScale(0.3)
-                                   .setInteractive({ useHandCursor: true });
+        .setScale(0.3)
+        .setInteractive({ useHandCursor: true });
 
         // Evento para cuando el puntero pasa por encima de la flecha derecha
         flechaDerecha.on('pointerover', () => {
@@ -58,9 +59,9 @@ export class Idioma extends Scene {
 
         // Agregamos la flecha de retroceder (izquierda) y la volteamos
         let flechaIzquierda = this.add.image(275, 384, 'flecha')
-                                     .setScale(0.3)
-                                     .setFlipX(true)
-                                     .setInteractive({ useHandCursor: true });
+        .setScale(0.3)
+        .setFlipX(true)
+        .setInteractive({ useHandCursor: true });
 
         // Evento para cuando el puntero pasa por encima de la flecha izquierda
         flechaIzquierda.on('pointerover', () => {
@@ -74,8 +75,8 @@ export class Idioma extends Scene {
 
         // Imagen "exit" para salir a la escena MainMenu
         let exitButton = this.add.image(950, 50, 'exit')
-                                .setScale(0.1)
-                                .setInteractive({ useHandCursor: true });
+        .setScale(0.1)
+        .setInteractive({ useHandCursor: true });
 
         // Evento para cuando el puntero pasa por encima del botón "exit"
         exitButton.on('pointerover', () => {

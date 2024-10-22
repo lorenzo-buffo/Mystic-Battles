@@ -45,9 +45,7 @@ export class Preloader extends Scene
             frameWidth: 50, // Ancho de cada frame del spritesheet
             frameHeight: 45 // Alto de cada frame del spritesheet
         });
-        this.load.image('exit', 'exit.png');
-        this.load.image('Alaric3', 'Alaric3.png')
-        this.load.image('Magnus3', 'Magnus3.png')
+        this.load.image('exit', 'exit.png')
         this.load.spritesheet('barraVida', 'spritesheetVida.png', { frameWidth: 98, frameHeight: 21 });
         this.load.spritesheet('alaric_walk', 'spritesheet2.2.png', { frameWidth: 68, frameHeight: 70 });
         this.load.spritesheet('magnus_walk', 'spritesheetmagnus.png', { frameWidth: 60, frameHeight: 60 });
@@ -66,11 +64,13 @@ export class Preloader extends Scene
         this.load.image('alaricGame2', 'placeholderalaric.png'); 
         this.load.image('magnusGame2', 'placeholdermagnus.png'); 
         this.load.image('menup', 'provisionalmenu.png'); 
-     
-}
+        this.load.image('fondoidioma', 'idiomaF.png'); 
+        this.load.spritesheet('caldero', 'caldero475x150.png', { frameWidth: 95, frameHeight: 150 });
+        this.load.spritesheet('Alariccoop', 'coopalaric.png', { frameWidth: 204, frameHeight: 204 });
+        this.load.spritesheet('Magnuscoop', 'coopmagnus.png', { frameWidth: 204, frameHeight: 204 });
 
-    
-    
+     
+} 
     create ()
     {
         
@@ -167,6 +167,27 @@ export class Preloader extends Scene
             frames: this.anims.generateFrameNumbers('ataqueElectrico', { start: 0, end: 5 }), // Ajusta los índices según tu spritesheet
             frameRate: 10,
             repeat: -1,
+        });
+           // Crear la animación del caldero
+        this.anims.create({
+            key: 'calderoAnim',
+            frames: this.anims.generateFrameNumbers('caldero', { start: 0, end: 4 }), 
+            frameRate: 7, 
+            repeat: -1 
+        });
+            // Crear la animación del caldero
+            this.anims.create({
+                key: 'magnusCoopAnim',
+                frames: this.anims.generateFrameNumbers('Magnuscoop', { start: 0, end: 7 }), 
+                frameRate: 10, 
+                repeat: -1 
+            });
+                // Crear la animación del caldero
+        this.anims.create({
+            key: 'alaricCoopAnim',
+            frames: this.anims.generateFrameNumbers('Alariccoop', { start: 0, end: 7 }), 
+            frameRate: 10, 
+            repeat: -1 
         });
       }
     }

@@ -5,15 +5,15 @@ export class MainMenu extends Scene {
     constructor() {
         super('MainMenu');
     }
-    init(data){
+    init(data) {
         this.language = data.language;
     }
 
     create() {
         // Crear los elementos de la escena
         const background = this.add.image(512, 384, 'menup');
-        const logo = this.add.image(517, 360, 'logo');
-        const title = this.add.text(512, 460, getPhrase('Hora de elegir un modo de juego.'), {
+        const logo = this.add.image(517, 360, 'logo').setScale(0.9);
+        const title = this.add.text(512, 70, getPhrase('Hora de elegir un modo de juego.'), {
             fontFamily: 'Pixelify Sans', fontSize: 50, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,
             align: 'center'
@@ -23,7 +23,7 @@ export class MainMenu extends Scene {
         let selectedMode = '';
 
         // AGREGAR BOTON MODO VS
-        const vsButton = this.add.text(200, 600, getPhrase("Modo VS"), {
+        const vsButton = this.add.text(150, 650, getPhrase("Modo VS"), {
             fontFamily: 'Pixelify Sans', fontSize: 36, color: '#ffffff',
             stroke: '#000000', strokeThickness: 7,
             align: 'center'
@@ -41,7 +41,7 @@ export class MainMenu extends Scene {
         });
 
         // AGREGAR BOTON MODO COOP
-        const coopButton = this.add.text(750, 600, getPhrase("Modo Cooperativo"), {
+        const coopButton = this.add.text(850, 650, getPhrase("Modo Cooperativo"), {
             fontFamily: 'Pixelify Sans', fontSize: 36, color: '#ffffff',
             stroke: '#000000', strokeThickness: 7,
             align: 'center'
@@ -63,11 +63,11 @@ export class MainMenu extends Scene {
 
         // Cambiar el tamaño y color del fondo del pop-up
         const popupBackground = this.add.graphics();
-        popupBackground.fillStyle(0x8B4511, 1); // Cambia el color aquí
-        popupBackground.fillRect(-300, -250, 600, 500); // Cambia el tamaño aquí
+        popupBackground.fillStyle(0x8B4511, 1);
+        popupBackground.fillRect(-300, -250, 600, 500);
 
         const popupText = this.add.text(0, -150, '', {
-            fontFamily: 'Pixelify Sans', fontSize: 32, color: '#ffffff' // Ajusta el tamaño del texto si es necesario
+            fontFamily: 'Pixelify Sans', fontSize: 32, color: '#ffffff'
         }).setOrigin(0.5);
 
         // Botón para comenzar
@@ -85,9 +85,9 @@ export class MainMenu extends Scene {
         });
         startButton.on('pointerdown', () => {
             if (selectedMode === 'VS') {
-                this.scene.start('Game'); // Escena para el modo VS
+                this.scene.start('Game');
             } else if (selectedMode === 'Coop') {
-                this.scene.start('Game2'); // Escena para el modo Cooperativo
+                this.scene.start('Game2');
             }
         });
 
@@ -95,8 +95,6 @@ export class MainMenu extends Scene {
         const closeButton = this.add.image(250, -210, 'exit').setOrigin(0.5);
         closeButton.setScale(0.1);
         closeButton.setInteractive({ cursor: 'pointer' });
-
-        // Añadir eventos para achicar el botón al pasar el cursor
         closeButton.on('pointerover', () => {
             closeButton.setScale(0.08);
         });
@@ -104,7 +102,6 @@ export class MainMenu extends Scene {
             closeButton.setScale(0.1);
         });
         closeButton.on('pointerdown', () => {
-            // Animación de salida
             this.tweens.add({
                 targets: popup,
                 scale: 0,
@@ -113,7 +110,7 @@ export class MainMenu extends Scene {
                 ease: 'Power2',
                 onComplete: () => {
                     popup.setVisible(false);
-                    setSceneVisible(true); // Hacer visible la escena nuevamente
+                    setSceneVisible(true); // Hacer visibles los elementos del menú
                 }
             });
         });
@@ -123,40 +120,33 @@ export class MainMenu extends Scene {
         // Función para mostrar el pop-up con el texto adecuado
         const showPopup = (message) => {
             popupText.setText(message);
-            setSceneVisible(false); // Ocultar la escena cuando el pop-up aparece
+            setSceneVisible(false); // Ocultar los elementos del menú
             popup.setVisible(true);
             
-            // Reiniciar escala y opacidad para la animación de entrada
             popup.setScale(0);
             popup.setAlpha(0);
 
-            // Animación de entrada
             this.tweens.add({
                 targets: popup,
                 scale: 1,
                 alpha: 1,
                 duration: 300,
                 ease: 'Power2',
-                onComplete: () => {
-                    // Puedes agregar código aquí si necesitas algo cuando la animación termina
-                }
             });
         };
 
         // Función para hacer visibles o invisibles los elementos de la escena
         const setSceneVisible = (visible) => {
-            background.setVisible(visible);
             logo.setVisible(visible);
             title.setVisible(visible);
             vsButton.setVisible(visible);
             coopButton.setVisible(visible);
         };
 
-        setSceneVisible(true); // Asegúrate de que los elementos sean visibles al inicio
+        setSceneVisible(true); // Hacer visibles los elementos del menú
 
         const Ajustes = this.add.image(950, 50, 'configuracion').setScale(0.3);
         Ajustes.setInteractive({ cursor: 'pointer' });
-        // Añadir eventos para achicar el botón al pasar el cursor
         Ajustes.on('pointerover', () => {
             Ajustes.setScale(0.25);
         });
@@ -166,9 +156,5 @@ export class MainMenu extends Scene {
         Ajustes.on('pointerdown', () => {
             this.scene.start('Idioma', { language: this.language });
         });
-    }
-
-    update() {
-        // Actualizaciones de la escena, si es necesario
     }
 }
