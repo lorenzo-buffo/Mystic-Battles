@@ -11,8 +11,8 @@ export class MainMenu extends Scene {
 
     create() {
         // Crear los elementos de la escena
-        const background = this.add.image(512, 384, 'background');
-        const logo = this.add.image(512, 300, 'logo');
+        const background = this.add.image(512, 384, 'menup');
+        const logo = this.add.image(517, 360, 'logo');
         const title = this.add.text(512, 460, getPhrase('Hora de elegir un modo de juego.'), {
             fontFamily: 'Pixelify Sans', fontSize: 50, color: '#ffffff',
             stroke: '#000000', strokeThickness: 8,

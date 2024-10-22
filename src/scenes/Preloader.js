@@ -31,7 +31,7 @@ export class Preloader extends Scene
     {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
-        this.load.image('logo', 'logo.png');
+        this.load.image('logo', 'logoprov.png');
         this.load.image('mapa', 'mapaslabcuadrada.png');
         this.load.spritesheet('ataque', 'boladefuegospritesheet.png', {
             frameWidth: 50, // Ancho de cada frame del spritesheet
@@ -65,6 +65,7 @@ export class Preloader extends Scene
         this.load.image('cuadro', 'cuadro.png'); 
         this.load.image('alaricGame2', 'placeholderalaric.png'); 
         this.load.image('magnusGame2', 'placeholdermagnus.png'); 
+        this.load.image('menup', 'provisionalmenu.png'); 
      
 }
 
