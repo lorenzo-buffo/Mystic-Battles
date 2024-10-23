@@ -41,10 +41,24 @@ export class GameOver extends Scene
             this.add.image(500, 500, 'magnusGame2').setOrigin(0.5, 0.5);
         }
         
-        // Opción para reiniciar el juego al hacer clic
-        this.input.on('pointerdown', () => {
-            this.input.removeAllListeners(); // Limpia todos los eventos de input previos
-            this.scene.start('MainMenu'); // Reiniciar el juego y volver al menú principal
+        // Imagen "exit" para salir a la escena MainMenu
+        let exitButton = this.add.image(950, 50, 'exit')
+        .setScale(0.1)
+        .setInteractive({ useHandCursor: true });
+
+        // Evento para cuando el puntero pasa por encima del botón "exit"
+        exitButton.on('pointerover', () => {
+            exitButton.setScale(0.09);  // Achica el botón de salida
+        });
+
+        // Evento para cuando el puntero sale del botón "exit"
+        exitButton.on('pointerout', () => {
+            exitButton.setScale(0.1);  // Vuelve al tamaño original
+        });
+
+        // Evento para cuando se presiona el botón "exit"
+        exitButton.on('pointerdown', () => {
+            this.scene.start('MainMenu');  // Cambia a la escena 'MainMenu'
         });
     }
 }

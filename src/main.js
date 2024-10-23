@@ -5,6 +5,7 @@ import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 import { Idioma } from './scenes/Idioma';
+import { GameOver2} from './scenes/GameOver2';
 
 
 const config = {
@@ -31,7 +32,7 @@ const config = {
         Game,
         Game2,
         GameOver,
-      
+        GameOver2,
     ]
 };
 

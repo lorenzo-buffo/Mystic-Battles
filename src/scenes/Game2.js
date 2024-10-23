@@ -17,6 +17,7 @@ export class Game2 extends Scene {
         this.temporizador = null; // Evento del temporizador
         this.textoBarraJugador = null; // Para mostrar las teclas presionadas
         this.vidaJugadores = 0; // Vida inicial de los jugadores
+        this.completo = false; // Indica si el jugador completó todos los hechizos
     }
 
     create() {
@@ -45,22 +46,18 @@ export class Game2 extends Scene {
 
         this.vidaJugadoresSprite = this.add.sprite(500, 150, 'barraVida', this.vidaJugadores).setScale(1.5);
 
-        // Inicializar el texto para mostrar las teclas presionadas
         this.textoBarraJugador = this.add.text(500, 400, '', {
             fontSize: '32px',
-            fill: '#00ff00', // Color verde para las teclas presionadas
-            fontFamily: 'Pixelify Sans', // Asegurarse de que la fuente coincida
+            fill: '#00ff00',
+            fontFamily: 'Pixelify Sans',
             align: 'center'
         }).setOrigin(0.5, 0.5);
 
         this.input.keyboard.on('keydown', this.capturarLetra, this);
-        //Animacion de alaric
-        const alaricCoop =  this.physics.add.sprite(120, 650, 'Alariccoop').setOrigin(0.5, 0.5);
+        const alaricCoop = this.physics.add.sprite(120, 650, 'Alariccoop').setOrigin(0.5, 0.5);
         alaricCoop.play('alaricCoopAnim');
-        //Animacion de magnus
-        const magnusCoop =  this.physics.add.sprite(900, 650, 'Magnuscoop').setOrigin(0.5, 0.5);
+        const magnusCoop = this.physics.add.sprite(900, 650, 'Magnuscoop').setOrigin(0.5, 0.5);
         magnusCoop.play('magnusCoopAnim');
-        //crear caldero
         const caldero = this.physics.add.sprite(500, 660, 'caldero').setOrigin(0.5, 0.5).setScale(1.3);
         caldero.play('calderoAnim');
     }
@@ -140,13 +137,12 @@ export class Game2 extends Scene {
             this.temporizador.remove();
             console.log('¡Tiempo agotado!');
 
-            // Reinicia la vida del jugador
             this.vidaJugadores = 0; 
-            this.vidaJugadoresSprite.setFrame(this.vidaJugadores); // Reinicia la barra de vida
+            this.vidaJugadoresSprite.setFrame(this.vidaJugadores);
 
             this.nivelActual = 0;
             this.regenerarNiveles();
-            this.scene.start('MainMenu');
+            this.scene.start('GameOver2', { completo: this.completo }); // Iniciar GameOver2
         }
     }
 
@@ -172,7 +168,10 @@ export class Game2 extends Scene {
                 this.textoBarraJugador.setText('');
                 this.textoTemporizador.setVisible(false);
 
-                if (this.nivelActual < this.niveles) {
+                if (this.nivelActual >= this.niveles) {
+                    this.completo = true; // Marca como completo
+                    this.scene.start('GameOver2', { completo: this.completo }); // Iniciar GameOver2
+                } else {
                     this.mostrarTexto = true;
                     this.mostrarArrayNivel(this.nivelActual);
                     this.puedeJugar = false;
@@ -191,7 +190,7 @@ export class Game2 extends Scene {
         this.vidaJugadoresSprite.setFrame(this.vidaJugadores);
 
         if (this.vidaJugadores >= 10) {
-            this.scene.start('MainMenu');
+            this.scene.start('GameOver2', { completo: this.completo }); // Iniciar GameOver2
         }
     }
 
