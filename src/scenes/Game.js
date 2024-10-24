@@ -8,17 +8,14 @@ export class Game extends Scene {
 initVariables() {
     this.vidaActual = 10;
     this.vidaActualMagnus = 10;
-    this.victoriasAlaric = 0;
-    this.victoriasMagnus = 0;
-    this.rondasGanadas = 2;
     this.contador = 3;
     this.textoContador = null;
     this.enContador = true;
     this.puedeDisparar = true;
-    this.puedeMoverse = true; // Inicializar aquí
+    this.puedeMoverse = true; 
     this.posicionAlaric = { x: 100, y: 900 };
     this.posicionMagnus = { x: 900, y: 100 };
-    this.cooldown = false; // Inicializar cooldown
+    this.cooldown = false; 
     this.puedeUsarAtaqueElectricoAlaric = false;
     this.puedeUsarAtaqueElectricoMagnus = false;
 }
@@ -90,24 +87,17 @@ create() {
         fontFamily: 'Pixelify Sans',
     }).setOrigin(0.5, 0.5);
 
-    //crea un texto para determinarn como va la partida
-    this.textoVictorias = this.add.text(500, 20, 'Alaric: 0 - Magnus: 0', {
-        fontSize: '24px',
-        fill: '#ffffff',
-        fontFamily: 'Pixelify Sans',
-    }).setOrigin(0.5, 0.5);
-
     this.pociones = this.physics.add.group();
     this.rayos = this.physics.add.group();
+    this.mostrarContador();
+    this.iniciarContador(); 
 
-    //reinicia la ronda
-    this.resetRound();
     }
 
 update() {
-    if (!this.puedeMoverse || this.enContador) {
-        return; // No permitir movimiento
-    }
+   if (!this.puedeMoverse || this.enContador) {
+    return; 
+}
         
     //controla el movimiento de alaric segun la tecla presionada
     if (this.cursors.right.isDown) {
@@ -181,30 +171,6 @@ update() {
     });
 }
 
-// Intenta realizar un ataque con Alaric
-intentaAtaqueAlaric() {
-    if (this.puedeDisparar && !this.cooldownAlaric) { // Verifica si Alaric puede disparar y si no hay cooldown
-        if (this.puedeUsarAtaqueElectricoAlaric) {
-            this.ataqueElectricoAlaric(); // Realiza ataque eléctrico
-        } else {
-            this.ataqueAlaric(); // Realiza ataque normal
-        }
-        this.iniciarCooldownAlaric(); // Inicia el cooldown de Alaric
-    }
-}
-
-// Intenta realizar un ataque con Magnus
-intentaAtaqueMagnus() {
-    if (this.puedeDisparar && !this.cooldownMagnus) { // Verifica si Magnus puede disparar y si no hay cooldown
-        if (this.puedeUsarAtaqueElectricoMagnus) {
-            this.ataqueElectricoMagnus(); // Realiza ataque eléctrico
-        } else {
-            this.ataqueMagnus(); // Realiza ataque normal
-        }
-        this.iniciarCooldownMagnus(); // Inicia el cooldown de Magnus
-    }
-}
-
 // Inicia el cooldown de Alaric
 iniciarCooldownAlaric() {
     this.cooldownAlaric = true; // Activa el estado de cooldown para Alaric
@@ -221,65 +187,45 @@ iniciarCooldownMagnus() {
     });
 }
 
-// Lanza el ataque de Alaric hacia la posición de Magnus con velocidad determinada
-ataqueAlaric() {
-    const ataque1 = this.ataques.create(this.player1.x, this.player1.y, 'ataque'); // Crea el ataque
-    ataque1.play('ataqueAnim'); // Reproduce la animación del ataque
-    ataque1.setData('owner', 'Alaric'); // Establece el propietario del ataque
+// Función general para manejar ataques
+realizarAtaque(player, tipoAtaque) {
+    let ataque;
+
+    if (tipoAtaque === 'normal') {
+        ataque = this.ataques.create(player.x, player.y, 'ataque');
+        ataque.play('ataqueAnim');
+        ataque.setData('owner', player === this.player1 ? 'Alaric' : 'Magnus');
+    } else if (tipoAtaque === 'electrico') {
+        ataque = this.ataques.create(player.x, player.y, 'ataqueElectrico');
+        ataque.play('ataqueElectricoAnim');
+        ataque.setData('owner', player === this.player1 ? 'Alaric' : 'Magnus');
+        ataque.setData('tipo', 'electrico');
+    }
 
     // Calcula la dirección del ataque
-    const direction = new Phaser.Math.Vector2(this.player2.x - this.player1.x, this.player2.y - this.player1.y);
-    direction.normalize(); // Normaliza la dirección
-    ataque1.setVelocity(direction.x * 500, direction.y * 500); // Establece la velocidad
-    ataque1.setScale(1); // Establece la escala del ataque
-    console.log("Alaric ataca!"); // Mensaje en consola
+    const direction = new Phaser.Math.Vector2(
+        (player === this.player1 ? this.player2.x : this.player1.x) - player.x,
+        (player === this.player1 ? this.player2.y : this.player1.y) - player.y
+    );
+    direction.normalize();
+    ataque.setVelocity(direction.x * (tipoAtaque === 'electrico' ? 1000 : 500), direction.y * (tipoAtaque === 'electrico' ? 1000 : 500));
+    ataque.setScale(1);
 }
 
-// Lanza el ataque de Magnus hacia la posición de Alaric con velocidad determinada
-ataqueMagnus() {
-    const ataque = this.ataques.create(this.player2.x, this.player2.y, 'ataque'); // Crea el ataque
-    ataque.play('ataqueAnim'); // Reproduce la animación del ataque
-    ataque.setData('owner', 'Magnus'); // Establece el propietario del ataque
-
-    // Calcula la dirección del ataque
-    const direction = new Phaser.Math.Vector2(this.player1.x - this.player2.x, this.player1.y - this.player2.y);
-    direction.normalize(); // Normaliza la dirección
-    ataque.setVelocity(direction.x * 500, direction.y * 500); // Establece la velocidad
-    ataque.setScale(1); // Establece la escala del ataque
-    console.log("Magnus ataca!"); // Mensaje en consola
+intentaAtaqueAlaric() {
+    if (this.puedeDisparar && !this.cooldownAlaric) {
+        this.realizarAtaque(this.player1, this.puedeUsarAtaqueElectricoAlaric ? 'electrico' : 'normal');
+        this.iniciarCooldownAlaric();
+    }
 }
 
-// Lanza el ataque eléctrico de Alaric
-ataqueElectricoAlaric() {
-    const ataqueElectrico = this.ataques.create(this.player1.x, this.player1.y, 'ataqueElectrico'); // Crea el ataque eléctrico
-    ataqueElectrico.play('ataqueElectricoAnim'); // Reproduce la animación del ataque eléctrico
-    ataqueElectrico.setData('owner', 'Alaric'); // Establece el propietario del ataque
-    ataqueElectrico.setData('tipo', 'electrico'); // Añade el tipo
-
-    // Calcula la dirección del ataque
-    const direction = new Phaser.Math.Vector2(this.player2.x - this.player1.x, this.player2.y - this.player1.y);
-    direction.normalize(); // Normaliza la dirección
-    ataqueElectrico.setVelocity(direction.x * 800, direction.y * 800); // Establece la velocidad
-    ataqueElectrico.setScale(1); // Establece la escala del ataque eléctrico
-    console.log("Alaric ataca eléctricamente!"); // Mensaje en consola
+intentaAtaqueMagnus() {
+    if (this.puedeDisparar && !this.cooldownMagnus) {
+        this.realizarAtaque(this.player2, this.puedeUsarAtaqueElectricoMagnus ? 'electrico' : 'normal');
+        this.iniciarCooldownMagnus();
+    }
 }
 
-// Lanza el ataque eléctrico de Magnus
-ataqueElectricoMagnus() {
-    const ataqueElectrico = this.ataques.create(this.player2.x, this.player2.y, 'ataqueElectrico'); // Crea el ataque eléctrico
-    ataqueElectrico.play('ataqueElectricoAnim'); // Reproduce la animación del ataque eléctrico
-    ataqueElectrico.setData('owner', 'Magnus'); // Establece el propietario del ataque
-    ataqueElectrico.setData('tipo', 'electrico'); // Añade el tipo
-
-    // Calcula la dirección del ataque
-    const direction = new Phaser.Math.Vector2(this.player1.x - this.player2.x, this.player1.y - this.player2.y);
-    direction.normalize(); // Normaliza la dirección
-    ataqueElectrico.setVelocity(direction.x * 800, direction.y * 800); // Establece la velocidad
-    ataqueElectrico.setScale(1); // Establece la escala del ataque eléctrico
-    console.log("Magnus ataca eléctricamente!"); // Mensaje en consola
-}
-
-// Reproduce la animación de explosión en la posición especificada
 reproducirExplosion(x, y) {
     const explosion = this.add.sprite(x, y, 'explosion'); // Crea el sprite de explosión
     explosion.play('explosionAnim'); // Reproduce la animación de explosión
@@ -290,25 +236,20 @@ reproducirExplosion(x, y) {
     });
 }
 
-// Maneja el daño que recibe Magnus
 recibeDaño() {
     this.vidaActual--; // Disminuye la vida actual de Alaric
     this.updateVida(); // Actualiza la barra de vida
-    console.log("Alaric recibe daño! Vida actual:", this.vidaActual); // Mensaje en consola
     this.tintRed(this.player1); // Efecto visual de daño
     this.checkForGameOver(); // Verifica si el juego ha terminado
 }
 
-// Maneja el daño que recibe Alaric
 recibeDañoMagnus() {
     this.vidaActualMagnus--; // Disminuye la vida actual de Magnus
     this.updateVidaMagnus(); // Actualiza la barra de vida
-    console.log("Magnus recibe daño! Vida actual:", this.vidaActualMagnus); // Mensaje en consola
     this.tintRed(this.player2); // Efecto visual de daño
     this.checkForGameOver(); // Verifica si el juego ha terminado
 }
 
-// Tiñe a los personajes de rojo para simular daño
 tintRed(player) {
     player.setTint(0xff0000); // Aplica tinte rojo al personaje
     this.time.delayedCall(500, () => {
@@ -316,27 +257,6 @@ tintRed(player) {
     });
 }
 
-// Comprueba si alguno de los jugadores ha perdido toda su vida y si alguno ha ganado suficientes rondas para terminar el juego
-checkForGameOver() {
-    let ganador = null; // Inicializa el ganador
-
-    // Verifica la vida de Alaric
-    if (this.vidaActual <= 0) {
-        this.victoriasMagnus++; // Incrementa victorias de Magnus
-        this.resetRound(); // Resetea la ronda
-    } else if (this.vidaActualMagnus <= 0) {
-        this.victoriasAlaric++; // Incrementa victorias de Alaric
-        this.resetRound(); // Resetea la ronda
-    }
-
-    // Verifica si se ha alcanzado el número de rondas ganadas
-    if (this.victoriasAlaric >= this.rondasGanadas || this.victoriasMagnus >= this.rondasGanadas) {
-        ganador = this.victoriasAlaric > this.victoriasMagnus ? 'Alaric' : 'Magnus'; // Determina el ganador
-        this.scene.start('GameOver', { ganador, victoriasAlaric: this.victoriasAlaric, victoriasMagnus: this.victoriasMagnus }); // Inicia la escena de Game Over
-    }
-}
-
-// Crea cajas en posiciones establecidas
 crearCajas() {
     const tamañosCajas = [100, 100, 100, 100]; // Tamaños de las cajas
     const posicionesEsquinas = [ // Posiciones donde se crearán las cajas
@@ -361,170 +281,132 @@ crearCajas() {
     cajaCentro.setFrame(0); // Inicializa la caja en el primer frame
 }
 
-// Reinicia la ronda junto con todas las variables que se han cambiado en el transcurso del gameplay
-resetRound() {
-    this.puedeMoverse = false; // Desactiva el movimiento
-    this.player1.setVelocity(0); // Detiene el movimiento de Alaric
-    this.player2.setVelocity(0); // Detiene el movimiento de Magnus
-
-    this.vidaActual = 10; // Restablece la vida de Alaric
-    this.vidaActualMagnus = 10; // Restablece la vida de Magnus
-    this.updateVida(); // Actualiza la barra de vida de Alaric
-    this.updateVidaMagnus(); // Actualiza la barra de vida de Magnus
-
-    // Restablece las posiciones de los jugadores
-    this.player1.setPosition(this.posicionAlaric.x, this.posicionAlaric.y);
-    this.player2.setPosition(this.posicionMagnus.x, this.posicionMagnus.y);
-
-    this.textoVictorias.setText(`Alaric: ${this.victoriasAlaric} - Magnus: ${this.victoriasMagnus}`); // Actualiza el texto de victorias
-
-    this.puedeDisparar = false; // Desactiva el disparo
-    this.contador = 3; // Reinicia el contador
-
-    // Reinicia las cajas al inicio de la ronda
-    this.cajas.clear(true, true); // Elimina las cajas existentes
-    this.crearCajas(); // Crea las nuevas cajas
-
-    // Elimina las pociones existentes
-    this.pociones.clear(true, true); // Elimina las pociones
-
-    // Destruye texto del contador si existe
-    if (this.textoContador) {
-        this.textoContador.destroy(); // Destruye el texto del contador
-    }
-
-    this.mostrarContador(); // Muestra el contador
-    this.iniciarContador(); // Inicia el contador
-}
-
-// Actualiza la barra de vida de Alaric según su vida actual
 updateVida() {
     const frameIndex = 10 - this.vidaActual; // Calcula el índice del frame
     this.vidaAlaric.setFrame(frameIndex); // Actualiza el frame de la barra de vida
 }
 
-// Actualiza la barra de vida de Magnus según su vida actual
 updateVidaMagnus() {
     const frameIndex = 10 - this.vidaActualMagnus; // Calcula el índice del frame
     this.vidaMagnus.setFrame(frameIndex); // Actualiza el frame de la barra de vida
 }
 
-// Muestra un contador para iniciar la partida
+checkForGameOver() {
+    if (this.vidaActual <= 0 || this.vidaActualMagnus <= 0) {
+        // Si Alaric gana
+        if (this.vidaActualMagnus <= 0) {
+            this.scene.start('GameOver', { winner: 'Alaric' }); // Pasa el ganador
+        } 
+        // Si Magnus gana
+        else if (this.vidaActual <= 0) {
+            this.scene.start('GameOver', { winner: 'Magnus' }); // Pasa el ganador
+        }
+    }
+}
+
 mostrarContador() {
-    this.textoContador = this.add.text(500, 400, this.contador, {
+    this.textoContador = this.add.text(500, 400, '3', {
         fontSize: '128px',
         fill: '#ffffff',
         fontFamily: 'Pixelify Sans'
-    }).setOrigin(0.5, 0.5); // Centro del texto
+    }).setOrigin(0.5, 0.5);
 }
 
-// Se inicia el contador
 iniciarContador() {
-    this.enContador = true; // Activa el estado de contador
+    this.enContador = true;
+    this.contador = 3;
+    this.puedeDisparar = false; // Desactiva el disparo
     const contadorInterval = setInterval(() => {
         if (this.contador > 0) {
-            this.textoContador.setText(this.contador); // Actualiza el texto del contador
-            this.contador--; // Decrementa el contador
+            this.textoContador.setText(this.contador);
+            this.contador--;
         } else {
-            clearInterval(contadorInterval); // Limpia el intervalo
-            this.textoContador.destroy(); // Destruye el texto del contador
+            clearInterval(contadorInterval);
+            this.textoContador.destroy();
             this.enContador = false; // Desactiva el estado de contador
             this.puedeDisparar = true; // Permite disparar
             this.puedeMoverse = true; // Reactiva el movimiento
         }
-    }, 1000); // Cada segundo
+    }, 1000);
 }
 
-// Genera una poción con una probabilidad del 50% que cura a los personajes
+// Genera una poción con probabilidades ajustadas
 generarPocion(x, y) {
     const probabilidad = Math.random(); // Genera un número aleatorio
-    
+
     // 50% de probabilidad de generar una poción de curación
     if (probabilidad < 0.5) {
         const pocion = this.physics.add.sprite(x, y, 'pocion'); // Crea la poción
         pocion.setInteractive(); // Habilita la interacción
         pocion.setScale(1); // Establece la escala
         pocion.play('pocion_appear'); // Reproduce la animación de aparición
-
         // Colisión con Alaric
         this.physics.add.overlap(this.player1, pocion, () => {
             this.recibirCuracion(this.player1); // Aplica curación a Alaric
             pocion.destroy(); // Destruye la poción
         });
-
         // Colisión con Magnus
         this.physics.add.overlap(this.player2, pocion, () => {
             this.recibirCuracion(this.player2); // Aplica curación a Magnus
             pocion.destroy(); // Destruye la poción
         });
-    } else if (probabilidad < 0.75) {  // 25% de probabilidad de generar una poción de ataque rara
+    } else if (probabilidad < 0.7) {  // 20% de probabilidad de generar una poción de ataque rara
         const pocionAtaque = this.physics.add.sprite(x, y, 'pocion_ataque'); // Crea la poción de ataque
         pocionAtaque.setInteractive(); // Habilita la interacción
         pocionAtaque.setScale(1); // Establece la escala
         pocionAtaque.play('pocion_ataque_appear'); // Reproduce la animación de aparición
-
         // Colisión con Alaric
         this.physics.add.overlap(this.player1, pocionAtaque, () => {
             this.generarRayos(this.player1); // Genera rayos para Alaric
             pocionAtaque.destroy(); // Destruye la poción de ataque
         });
-
         // Colisión con Magnus
         this.physics.add.overlap(this.player2, pocionAtaque, () => {
             this.generarRayos(this.player2); // Genera rayos para Magnus
             pocionAtaque.destroy(); // Destruye la poción de ataque
         });
-    } else { // 25% de probabilidad de generar la poción eléctrica
-        const pocionElectrica = this.physics.add.sprite(x, y, 'pocionElectrica'); // Crea la poción de ataque
+    } else { // 30% de probabilidad de generar la poción eléctrica
+        const pocionElectrica = this.physics.add.sprite(x, y, 'pocionElectrica'); // Crea la poción eléctrica
         pocionElectrica.setInteractive(); // Habilita la interacción
         pocionElectrica.setScale(1); // Establece la escala
         pocionElectrica.play('pocionElectrica_appear'); // Reproduce la animación de aparición
-
         // Colisión con Alaric
         this.physics.add.overlap(this.player1, pocionElectrica, () => {
-            this.aplicarEfectoElectrico(this.player1); // Aplica el efecto eléctrico a Alaric
-            pocionElectrica.destroy(); // Destruye la poción eléctrica
+            this.aplicarEfectoElectrico(this.player1); 
+            pocionElectrica.destroy(); 
         });
-
         // Colisión con Magnus
         this.physics.add.overlap(this.player2, pocionElectrica, () => {
-            this.aplicarEfectoElectrico(this.player2); // Aplica el efecto eléctrico a Magnus
-            pocionElectrica.destroy(); // Destruye la poción eléctrica
+            this.aplicarEfectoElectrico(this.player2); 
+            pocionElectrica.destroy(); 
         });
     }
 }
 
-// Aplica el efecto eléctrico al jugador
 aplicarEfectoElectrico(player) {
     if (player === this.player1) {
         this.puedeUsarAtaqueElectricoAlaric = true; // Permite el ataque eléctrico para Alaric
-        console.log("Alaric ha recogido una poción eléctrica!"); // Mensaje en consola
         this.time.delayedCall(10000, () => {
             this.puedeUsarAtaqueElectricoAlaric = false; // Desactiva el ataque eléctrico después de 10 segundos
         });
     } else if (player === this.player2) {
         this.puedeUsarAtaqueElectricoMagnus = true; // Permite el ataque eléctrico para Magnus
-        console.log("Magnus ha recogido una poción eléctrica!"); // Mensaje en consola
         this.time.delayedCall(10000, () => {
             this.puedeUsarAtaqueElectricoMagnus = false; // Desactiva el ataque eléctrico después de 10 segundos
         });
     }
 }
 
-// Los personajes se curan 3 puntos de vida al colisionar con la poción
 recibirCuracion(player) {
     if (player === this.player1) {
         this.vidaActual = Math.min(this.vidaActual + 3, 10); // Cura 3 puntos de vida, max 10
         this.updateVida(); // Actualiza la barra de vida
-        console.log("Alaric ha recibido curación! Vida actual:", this.vidaActual); // Mensaje en consola
     } else if (player === this.player2) {
         this.vidaActualMagnus = Math.min(this.vidaActualMagnus + 3, 10); // Cura 3 puntos de vida, max 10
         this.updateVidaMagnus(); // Actualiza la barra de vida
-        console.log("Magnus ha recibido curación! Vida actual:", this.vidaActualMagnus); // Mensaje en consola
     }
 }
 
-// Genera rayos en posiciones aleatorias
 generarRayos(player) {
     const numRayos = 4; // Número de rayos a generar
     const espaciado = 200; // Espaciado entre rayos
@@ -540,16 +422,13 @@ generarRayos(player) {
 
         posiciones.add(altura); // Agrega la altura al conjunto
         altura += i * espaciado; // Ajusta la altura según el índice
-
         const lado = Math.random() < 0.5 ? 'izquierda' : 'derecha'; // Decide el lado del rayo
         const posicionX = lado === 'izquierda' ? offset : this.cameras.main.width - offset; // Establece la posición X
-
         const señal = this.add.sprite(posicionX, altura, 'Emergencia').setOrigin(0.5, 0.5).setScale(0.1); // Crea la señal
 
         // Crear el rayo justo después de que la señal desaparezca
         this.time.delayedCall(1000, () => {
             señal.destroy(); // Destruye la señal
-
             const rayo = this.add.sprite(lado === 'izquierda' ? -50 : this.cameras.main.width + 50, altura, 'Rayo').setOrigin(0.5, 0.5); // Crea el rayo
             this.rayos.add(rayo); // Agrega el rayo al grupo
 
@@ -563,25 +442,21 @@ generarRayos(player) {
             });
         });
     }
-    
     // Maneja la colisión de rayos con Alaric
     this.physics.add.overlap(this.player1, this.rayos, (player, rayo) => {
-        this.vidaActual -= 4; // Cambia el daño a 4 solo para los rayos
-        this.updateVida(); // Actualiza la barra de vida de Alaric
-        console.log("Alaric recibe daño por rayo! Vida actual:", this.vidaActual); // Mensaje en consola
-        this.tintRed(this.player1); // Efecto visual
-        rayo.destroy(); // Destruye el rayo después de colisionar
-        this.checkForGameOver(); // Verifica si el juego ha terminado
+        this.vidaActual -= 4; 
+        this.updateVida(); 
+        this.tintRed(this.player1); 
+        rayo.destroy(); 
+        this.checkForGameOver(); 
     });
-    
     // Maneja la colisión de rayos con Magnus
     this.physics.add.overlap(this.player2, this.rayos, (player, rayo) => {
-        this.vidaActualMagnus -= 4; // Cambia el daño a 4 solo para los rayos
-        this.updateVidaMagnus(); // Actualiza la barra de vida de Magnus
-        console.log("Magnus recibe daño por rayo! Vida actual:", this.vidaActualMagnus); // Mensaje en consola
-        this.tintRed(this.player2); // Efecto visual
-        rayo.destroy(); // Destruye el rayo después de colisionar
-        this.checkForGameOver(); // Verifica si el juego ha terminado
+        this.vidaActualMagnus -= 4; 
+        this.updateVidaMagnus(); 
+        this.tintRed(this.player2); 
+        rayo.destroy(); 
+        this.checkForGameOver(); 
     });
-}
+    }
 }
