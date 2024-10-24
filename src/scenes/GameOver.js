@@ -51,6 +51,23 @@ export class GameOver extends Scene
         exitButton.on('pointerdown', () => {
             this.scene.start('MainMenu');
         });
+
+         // Imagen "reset" para volver a la escena game
+         const resetButton = this.add.image(500, 600, 'reset')
+         .setScale(1)
+         .setInteractive({ useHandCursor: true });
+ 
+         resetButton.on('pointerover', () => {
+            resetButton.setScale(0.9);
+         });
+ 
+         resetButton.on('pointerout', () => {
+            resetButton.setScale(1);
+         });
+ 
+         resetButton.on('pointerdown', () => {
+             this.scene.start('Game');
+         });
     }
 
     // Función para obtener la clave de la imagen del personaje basado en el nombre

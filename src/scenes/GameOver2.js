@@ -38,5 +38,22 @@ export class GameOver2 extends Scene
         exitButton.on('pointerdown', () => {
             this.scene.start('MainMenu');  // Cambia a la escena 'MainMenu'
         });
+
+          // Imagen "reset" para volver a la escena game
+          const resetButton = this.add.image(500, 600, 'reset')
+          .setScale(1)
+          .setInteractive({ useHandCursor: true });
+  
+          resetButton.on('pointerover', () => {
+             resetButton.setScale(0.9);
+          });
+  
+          resetButton.on('pointerout', () => {
+             resetButton.setScale(1);
+          });
+  
+          resetButton.on('pointerdown', () => {
+              this.scene.start('Game2');
+          });
     }
 }
