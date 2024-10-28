@@ -56,6 +56,7 @@ export class Preloader extends Scene
         this.load.image('Rayo', 'rayocostado.png');
         this.load.image('Emergencia', 'emergencia.png');
         this.load.image('ingles', 'ingles.png');
+        this.load.image('mapacoop', 'fondocoop.png');
         this.load.image('Español', 'Español.png');
         this.load.image('portugues', 'portugues.png');
         this.load.image('configuracion', 'config.png');

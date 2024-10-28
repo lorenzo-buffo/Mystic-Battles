@@ -24,6 +24,7 @@ export class Game2 extends Scene {
     create() {
         this.regenerarNiveles(); // Generar las combinaciones de letras al iniciar el juego
 
+        this.add.image(512, 384, 'mapacoop');
         const cuadro = this.add.image(500, 400, "cuadro").setAlpha(0).setScale(0.5);
 
         this.tweens.add({
