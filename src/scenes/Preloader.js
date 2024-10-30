@@ -65,9 +65,9 @@ export class Preloader extends Scene
         this.load.image('alaricGame2', 'placeholderalaric.png'); 
         this.load.image('magnusGame2', 'placeholdermagnus.png'); 
         this.load.image('menup', 'provisionalmenu.png'); 
-        this.load.image('fondoidioma', 'idiomaF.png'); 
         this.load.image('reset', 'reset.png'); 
         this.load.image('murcielago', 'murcielago.png'); 
+        this.load.image('fondoidioma', 'fondoidiomas.png'); 
         this.load.spritesheet('caldero', 'caldero475x150.png', { frameWidth: 95, frameHeight: 150 });
         this.load.spritesheet('Alariccoop', 'coopalaric.png', { frameWidth: 204, frameHeight: 204 });
         this.load.spritesheet('Magnuscoop', 'coopmagnus.png', { frameWidth: 204, frameHeight: 204 });

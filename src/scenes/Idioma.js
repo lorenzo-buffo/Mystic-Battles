@@ -22,7 +22,7 @@ export class Idioma extends Scene {
     }
 
     create(){
-        const background = this.add.image(512, 384, 'menup');
+        const background = this.add.image(512, 384, 'fondoidioma');
         // Agregamos la bandera inicial
         this.bandera = this.add.image(512, 384, this.banderaTexturas[this.banderaIndex].t)
         .setScale(0.5)
@@ -44,33 +44,33 @@ export class Idioma extends Scene {
 
         // Agregamos la flecha de avanzar (derecha)
         let flechaDerecha = this.add.image(750, 384, 'flecha')
-        .setScale(0.3)
+        .setScale(1)
         .setInteractive({ useHandCursor: true });
 
         // Evento para cuando el puntero pasa por encima de la flecha derecha
         flechaDerecha.on('pointerover', () => {
-            flechaDerecha.setScale(0.27);  // Achica la flecha derecha
+            flechaDerecha.setScale(0.9);  // Achica la flecha derecha
         });
 
         // Evento para cuando el puntero sale de la flecha derecha
         flechaDerecha.on('pointerout', () => {
-            flechaDerecha.setScale(0.3);  // Vuelve al tamaño original
+            flechaDerecha.setScale(1);  // Vuelve al tamaño original
         });
 
         // Agregamos la flecha de retroceder (izquierda) y la volteamos
         let flechaIzquierda = this.add.image(275, 384, 'flecha')
-        .setScale(0.3)
+        .setScale(1)
         .setFlipX(true)
         .setInteractive({ useHandCursor: true });
 
         // Evento para cuando el puntero pasa por encima de la flecha izquierda
         flechaIzquierda.on('pointerover', () => {
-            flechaIzquierda.setScale(0.27);  // Achica la flecha izquierda
+            flechaIzquierda.setScale(0.9);  // Achica la flecha izquierda
         });
 
         // Evento para cuando el puntero sale de la flecha izquierda
         flechaIzquierda.on('pointerout', () => {
-            flechaIzquierda.setScale(0.3);  // Vuelve al tamaño original
+            flechaIzquierda.setScale(1);  // Vuelve al tamaño original
         });
 
         // Imagen "exit" para salir a la escena MainMenu
