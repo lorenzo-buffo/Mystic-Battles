@@ -10,17 +10,17 @@ export class GameOver extends Scene
 
     create(data) {
         this.cameras.main.setBackgroundColor(0x000000);
-        
+        const background = this.add.image(512, 384, 'fondoidioma');
         // Texto de Game Over
-        this.add.text(500, 100, getPhrase('Fin del juego'), {
+        this.add.text(500, 150, getPhrase('Fin del juego'), {
             fontSize: '64px',
             fill: '#ffffff',
             fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
         
         // Mensaje del ganador
-        const winnerMessage = `${data.winner} ha ganado!`;
-        this.add.text(500, 200, winnerMessage, {
+        const winnerMessage = getPhrase(`${data.winner} ha ganado!`);
+        this.add.text(500, 220, winnerMessage, {
             fontSize: '48px',
             fill: '#ffffff',
             fontFamily: 'Pixelify Sans',
@@ -33,18 +33,18 @@ export class GameOver extends Scene
         }
 
         // Imagen "exit" para salir a la escena MainMenu
-        let exitButton = this.add.image(950, 50, 'exit')
+        let exitButton = this.add.image(511, 50, 'exit')
         .setScale(0.1)
         .setInteractive({ useHandCursor: true });
 
         // Evento para cuando el puntero pasa por encima del botón "exit"
         exitButton.on('pointerover', () => {
-            exitButton.setScale(0.09);
+            exitButton.setScale(0.08);
         });
 
         // Evento para cuando el puntero sale del botón "exit"
         exitButton.on('pointerout', () => {
-            exitButton.setScale(0.1);
+            exitButton.setScale(0.09);
         });
 
         // Evento para cuando se presiona el botón "exit"

@@ -66,6 +66,7 @@ export class Preloader extends Scene
         this.load.image('magnusGame2', 'placeholdermagnus.png'); 
         this.load.image('menup', 'provisionalmenu.png'); 
         this.load.image('reset', 'reset.png'); 
+        this.load.image('pausa', 'pausa.png'); 
         this.load.image('murcielago', 'murcielago.png'); 
         this.load.image('fondoidioma', 'fondoidiomas.png'); 
         this.load.spritesheet('caldero', 'caldero475x150.png', { frameWidth: 95, frameHeight: 150 });

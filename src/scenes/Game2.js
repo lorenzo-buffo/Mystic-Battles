@@ -17,16 +17,27 @@ export class Game2 extends Scene {
         this.temporizador = null; // Evento del temporizador
         this.textoBarraJugador = null; // Para mostrar las teclas presionadas
         this.completo = false; // Indica si el jugador completó todos los hechizos
+    }
+    create() {
+        this.regenerarNiveles();
         this.clicsRestantes = 5; // Clics disponibles
         this.enEspera = false; // Indica si está en espera
-    }
-
-    create() {
-        this.regenerarNiveles(); // Generar las combinaciones de letras al iniciar el juego
-
         this.add.image(512, 384, 'mapacoop');
-        const cuadro = this.add.image(500, 400, "cuadro").setAlpha(0).setScale(0.5);
 
+        let exitButton = this.add.image(950, 50, 'exit')
+            .setScale(0.1)
+            .setInteractive({ useHandCursor: true });
+        exitButton.on('pointerover', () => {
+            exitButton.setScale(0.08);
+        });
+        exitButton.on('pointerout', () => {
+            exitButton.setScale(0.09);
+        });
+        exitButton.on('pointerdown', () => {
+            this.scene.start('MainMenu');
+        });
+
+        const cuadro = this.add.image(500, 400, "cuadro").setAlpha(0).setScale(0.5);
         this.tweens.add({
             targets: cuadro,
             alpha: { from: 0, to: 1 },
@@ -45,7 +56,7 @@ export class Game2 extends Scene {
             fill: '#ffffff',
             fontFamily: 'Pixelify Sans'
         }).setVisible(false);
-        
+
         this.vidaJugadores = 0; // Vida inicial de los jugadores
         this.vidaJugadoresSprite = this.add.sprite(500, 150, 'barraVida', this.vidaJugadores).setScale(1.5);
 
@@ -56,13 +67,15 @@ export class Game2 extends Scene {
             align: 'center'
         }).setOrigin(0.5, 0.5);
 
-        this.ataquesDisponibles = this.add.text(850, 500, `Ataques disponibles: ${this.clicsRestantes}/5`, {
+        this.ataquesDisponibles = this.add.text(850, 500, getPhrase(`Ataques disponibles: ${this.clicsRestantes}/5`), {
             fontSize: '28px',
             fill: '#ffffff',
             fontFamily: 'Pixelify Sans'
         }).setOrigin(0.5, 0.5);
 
+        // Añadir eventos de entrada
         this.input.keyboard.on('keydown', this.capturarLetra, this);
+        
         const alaricCoop = this.physics.add.sprite(120, 650, 'Alariccoop').setOrigin(0.5, 0.5);
         alaricCoop.play('alaricCoopAnim');
         const magnusCoop = this.physics.add.sprite(900, 650, 'Magnuscoop').setOrigin(0.5, 0.5);
@@ -71,9 +84,9 @@ export class Game2 extends Scene {
         caldero.play('calderoAnim');
 
         this.murcielagosGroup = this.physics.add.group();
-        // Temporizador para crear murciélagos
+
         this.time.addEvent({
-            delay: 1000, // cada segundo
+            delay: 800,
             callback: this.crearMurcielago,
             callbackScope: this,
             loop: true
@@ -165,30 +178,15 @@ export class Game2 extends Scene {
     }
 
     capturarLetra(event) {
-        if (this.mostrarTexto || this.enEspera) {
+        if (this.mostrarTexto) {
             return;
         }
-
         if (event.key.length === 1 && event.key.match(/[a-zA-Z]/)) {
             this.arrayJugador.push(event.key.toUpperCase());
             this.textoBarraJugador.setText(this.arrayJugador.join(' '));
         }
-
-        if (this.clicsRestantes > 0) {
-            this.clicsRestantes--;
-            this.ataquesDisponibles.setText(`Ataques disponibles: ${this.clicsRestantes}/5`);
-            
-            if (this.clicsRestantes === 0) {
-                this.enEspera = true;
-                this.time.delayedCall(3000, () => {
-                    this.clicsRestantes = 5; // Reiniciar clics
-                    this.ataquesDisponibles.setText(`Ataques disponibles: ${this.clicsRestantes}/5`);
-                    this.enEspera = false; // Desactivar el estado de espera
-                });
-            }
-        }
     }
-
+    
     update() {
         const cantidadTeclas = this.arrayNivel[this.nivelActual]?.length;
 
@@ -202,8 +200,8 @@ export class Game2 extends Scene {
                 this.textoTemporizador.setVisible(false);
 
                 if (this.nivelActual >= this.niveles) {
-                    this.completo = true; // Marca como completo
-                    this.scene.start('GameOver2', { completo: this.completo }); // Iniciar GameOver2
+                    this.completo = true;
+                    this.scene.start('GameOver2', { completo: this.completo });
                 } else {
                     this.mostrarTexto = true;
                     this.mostrarArrayNivel(this.nivelActual);
@@ -216,12 +214,11 @@ export class Game2 extends Scene {
                 this.textoBarraJugador.setText('');
             }
         }
-        
-        // Eliminar murciélagos que salgan de la pantalla
+
         this.murcielagosGroup.children.iterate((murcielago) => {
             if (murcielago) {
                 if (murcielago.x < 0 || murcielago.x > 800 || murcielago.y > 600) {
-                    murcielago.destroy(); // Eliminar murcielago si sale de la pantalla
+                    murcielago.destroy();
                 }
             }
         });
@@ -275,44 +272,36 @@ export class Game2 extends Scene {
         }
         return array;
     }
-
     crearMurcielago() {
-        let murcielago;
-        // Aparecer desde la parte superior
-        murcielago = this.murcielagosGroup.create(Math.random() * 800, -50, 'murcielago'); // Cambiar Y a -50
-        murcielago.setScale(0.5);
+        let murcielago = this.murcielagosGroup.create(Math.random() * 800, -50, 'murcielago');
+        murcielago.setScale(1.2);
+        murcielago.setInteractive();
     
-        // Hacer el murciélago interactivo
-        murcielago.setInteractive(); 
         murcielago.on('pointerdown', () => {
             if (this.clicsRestantes > 0 && !this.enEspera) {
                 this.eliminarMurcielago(murcielago);
                 this.clicsRestantes--;
-
                 this.ataquesDisponibles.setText(`Ataques disponibles: ${this.clicsRestantes}/5`);
-                
+    
                 if (this.clicsRestantes === 0) {
                     this.enEspera = true;
                     this.time.delayedCall(3000, () => {
-                        this.clicsRestantes = 5; // Reiniciar clics
+                        this.clicsRestantes = 5;
                         this.ataquesDisponibles.setText(`Ataques disponibles: ${this.clicsRestantes}/5`);
-                        this.enEspera = false; // Desactivar el estado de espera
+                        this.enEspera = false;
                     });
                 }
             }
         });
     
-        // Desplazarse a la posición de destino
         let destinoX = Phaser.Math.Between(100, 900);
-        let destinoY = 400; // Ajusta según donde quieras que se queden
-    
+        let destinoY = 400;
         this.tweens.add({
             targets: murcielago,
             x: destinoX,
             y: destinoY,
             duration: 500,
             onComplete: () => {
-                // Revolotear dentro de un área una vez que llegue
                 this.revolotear(murcielago, destinoX, destinoY);
             }
         });
@@ -339,7 +328,7 @@ export class Game2 extends Scene {
         const explosion = this.add.sprite(murcielago.x, murcielago.y, 'explosion');
         explosion.play('explosionAnim');
         explosion.setScale(2);
-        // Eliminar el murcielago después de un tiempo
+        // Eliminar el murciélago después de un tiempo
         explosion.on('animationcomplete', () => {
             explosion.destroy(); // Eliminar la explosión después de que termine la animación
         });

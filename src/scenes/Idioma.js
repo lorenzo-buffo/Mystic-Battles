@@ -74,7 +74,7 @@ export class Idioma extends Scene {
         });
 
         // Imagen "exit" para salir a la escena MainMenu
-        let exitButton = this.add.image(950, 50, 'exit')
+        let exitButton = this.add.image(510, 50, 'exit')
         .setScale(0.1)
         .setInteractive({ useHandCursor: true });
 
