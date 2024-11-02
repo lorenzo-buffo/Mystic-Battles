@@ -103,6 +103,11 @@ export class Game extends Scene {
         exitButton.on('pointerdown', () => {
             this.scene.start('MainMenu');  
         });
+        //sonidos de disparos
+        this.sonidoDisparoNormal = this.sound.add('disparoNormal');
+        this.sonidoDisparoElectrico = this.sound.add('disparoElectrico');
+        this.sonidoEmergencia = this.sound.add('emergenciasound');
+        this.sonidoNumeros = this.sound.add('numeros');
     }
 
     update() {
@@ -196,21 +201,18 @@ export class Game extends Scene {
     
     realizarAtaque(player, tipoAtaque) {
         let ataque;
-    
         if (tipoAtaque === 'normal') {
             ataque = this.ataques.create(player.x, player.y, 'ataque');
             ataque.play('ataqueAnim');
+            this.sonidoDisparoNormal.play(); // Usa la instancia del sonido
             ataque.setData('owner', player === this.player1 ? 'Alaric' : 'Magnus');
         } else if (tipoAtaque === 'electrico') {
             ataque = this.ataques.create(player.x, player.y, 'ataqueElectrico');
             ataque.play('ataqueElectricoAnim');
             ataque.setData('owner', player === this.player1 ? 'Alaric' : 'Magnus');
             ataque.setData('tipo', 'electrico');
-            // Reproduce el sonido de disparo eléctrico
-            const sonidoDisparo = this.sound.add('disparoElectrico');
-            sonidoDisparo.play();
+            this.sonidoDisparoElectrico.play(); // Usa la instancia del sonido
         }
-    
         // Calcula la dirección del ataque
         const direction = new Phaser.Math.Vector2(
             (player === this.player1 ? this.player2.x : this.player1.x) - player.x,
@@ -241,7 +243,6 @@ reproducirExplosion(x, y) {
     // Reproduce el sonido de explosión
     const explosionSound = this.sound.add('explosionSound');
     explosionSound.play();
-
     // Destruye la explosión después de que termine la animación
     explosion.on('animationcomplete', () => {
         explosion.destroy(); // Destruye el sprite de explosión
@@ -277,7 +278,6 @@ crearCajas() {
         { x: 150, y: 600 },
         { x: 850, y: 600 }
     ];
-
     posicionesEsquinas.forEach((pos) => {
         const caja = this.cajas.create(pos.x, pos.y, 'caja_spritesheet'); // Crea la caja
         caja.setImmovable(true); // La caja no se puede mover
@@ -285,7 +285,6 @@ crearCajas() {
         caja.collisiones = 0; // Inicializa el contador de colisiones
         caja.setFrame(0); // Inicializa la caja en el primer frame
     });
-
     const cajaCentro = this.cajas.create(500, 400, 'caja_spritesheet'); // Crea la caja central
     cajaCentro.setImmovable(true); // La caja no se puede mover
     cajaCentro.setScale(2); // Escala de la caja central
@@ -332,6 +331,7 @@ iniciarContador() {
         if (this.contador > 0) {
             this.textoContador.setText(this.contador);
             this.contador--;
+            this.sonidoNumeros.play();
         } else {
             clearInterval(contadorInterval);
             this.textoContador.destroy();
@@ -444,6 +444,10 @@ generarRayos(player) {
         altura += i * espaciado; // Ajusta la altura según el índice
         const lado = Math.random() < 0.5 ? 'izquierda' : 'derecha'; // Decide el lado del rayo
         const posicionX = lado === 'izquierda' ? offset : this.cameras.main.width - offset; // Establece la posición X
+
+        // Reproduce el sonido de emergencia
+        this.sonidoEmergencia.play();
+
         const señal = this.add.sprite(posicionX, altura, 'Emergencia').setOrigin(0.5, 0.5).setScale(0.1); // Crea la señal
 
         // Crear el rayo justo después de que la señal desaparezca

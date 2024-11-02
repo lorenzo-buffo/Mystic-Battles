@@ -71,12 +71,16 @@ export class Preloader extends Scene
         this.load.spritesheet('caldero', 'caldero475x150.png', { frameWidth: 95, frameHeight: 150 });
         this.load.spritesheet('Alariccoop', 'coopalaric.png', { frameWidth: 204, frameHeight: 204 });
         this.load.spritesheet('Magnuscoop', 'coopmagnus.png', { frameWidth: 204, frameHeight: 204 });
-        this.load.audio('explosionSound', 'rayodmg.wav'); // Asegúrate de usar la ruta correcta
+        this.load.audio('explosionSound', 'rayodmg.wav'); 
         this.load.audio('rayoSound', 'rayopasa.wav');
         this.load.audio('rayoColision', 'colisionrayo.wav');
         this.load.audio('vidaSound', 'vidasound.wav');
         this.load.audio('electricSound', 'electricocolision.wav');
         this.load.audio('disparoElectrico', 'lanzeelectrico.wav');
+        this.load.audio('disparoNormal', 'ataquenormal.wav');
+        this.load.audio('emergenciasound', 'emergenciasound.wav');
+        this.load.audio('numeros', 'numeros.wav');
+        this.load.audio('hechizoIncorrecto', 'hechizoIncorrecto.wav');
 } 
     create ()
     {

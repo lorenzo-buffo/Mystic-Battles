@@ -18,6 +18,7 @@ export class Game2 extends Scene {
         this.textoBarraJugador = null; // Para mostrar las teclas presionadas
         this.completo = false; // Indica si el jugador completó todos los hechizos
     }
+
     create() {
         this.regenerarNiveles();
         this.clicsRestantes = 5; // Clics disponibles
@@ -233,13 +234,14 @@ export class Game2 extends Scene {
     aumentarVida() {
         this.vidaJugadores++;
         this.vidaJugadoresSprite.setFrame(this.vidaJugadores);
-
         if (this.vidaJugadores >= 10) {
             this.scene.start('GameOver2', { completo: this.completo }); // Iniciar GameOver2
         }
     }
     
     mostrarMensajeIncorrecto() {
+        const hechizoSonido = this.sound.add('hechizoIncorrecto');
+        hechizoSonido.play();
         this.mensajeIncorrecto = this.add.text(300, 380, getPhrase('Hechizo incorrecto!'), {
             fontSize: '32px',
             fill: '#ff0000',
@@ -291,7 +293,7 @@ export class Game2 extends Scene {
     
                 if (this.clicsRestantes === 0) {
                     this.enEspera = true;
-                    this.time.delayedCall(3000, () => {
+                    this.time.delayedCall(2500, () => {
                         this.clicsRestantes = 5;
                         this.ataquesDisponibles.setText(`Ataques disponibles: ${this.clicsRestantes}/5`);
                         this.enEspera = false;
@@ -334,6 +336,8 @@ export class Game2 extends Scene {
         const explosion = this.add.sprite(murcielago.x, murcielago.y, 'explosion');
         explosion.play('explosionAnim');
         explosion.setScale(2);
+        const explosionSound = this.sound.add('explosionSound');
+        explosionSound.play();
         // Eliminar el murciélago después de un tiempo
         explosion.on('animationcomplete', () => {
             explosion.destroy(); // Eliminar la explosión después de que termine la animación
