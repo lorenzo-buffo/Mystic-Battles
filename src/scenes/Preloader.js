@@ -66,14 +66,17 @@ export class Preloader extends Scene
         this.load.image('magnusGame2', 'placeholdermagnus.png'); 
         this.load.image('menup', 'provisionalmenu.png'); 
         this.load.image('reset', 'reset.png'); 
-        this.load.image('pausa', 'pausa.png'); 
         this.load.image('murcielago', 'murcielago.png'); 
         this.load.image('fondoidioma', 'fondoidiomas.png'); 
         this.load.spritesheet('caldero', 'caldero475x150.png', { frameWidth: 95, frameHeight: 150 });
         this.load.spritesheet('Alariccoop', 'coopalaric.png', { frameWidth: 204, frameHeight: 204 });
         this.load.spritesheet('Magnuscoop', 'coopmagnus.png', { frameWidth: 204, frameHeight: 204 });
-
-     
+        this.load.audio('explosionSound', 'rayodmg.wav'); // Asegúrate de usar la ruta correcta
+        this.load.audio('rayoSound', 'rayopasa.wav');
+        this.load.audio('rayoColision', 'colisionrayo.wav');
+        this.load.audio('vidaSound', 'vidasound.wav');
+        this.load.audio('electricSound', 'electricocolision.wav');
+        this.load.audio('disparoElectrico', 'lanzeelectrico.wav');
 } 
     create ()
     {

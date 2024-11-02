@@ -22,7 +22,7 @@ export class Idioma extends Scene {
     }
 
     create(){
-        const background = this.add.image(512, 384, 'fondoidioma');
+       this.add.image(512, 384, 'fondoidioma');
         // Agregamos la bandera inicial
         this.bandera = this.add.image(512, 384, this.banderaTexturas[this.banderaIndex].t)
         .setScale(0.5)

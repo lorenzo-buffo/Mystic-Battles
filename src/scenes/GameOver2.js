@@ -9,7 +9,6 @@ export class GameOver2 extends Scene
     }
 
     create(data) {
-        const background = this.add.image(512, 384, 'fondoidioma');
         const mensaje = data.completo 
             ? getPhrase("¡Felicidades, lograste completar todos los hechizos!") 
             : getPhrase("Mala suerte, no has podido completar todos los hechizos!");

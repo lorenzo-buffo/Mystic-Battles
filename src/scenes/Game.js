@@ -69,6 +69,8 @@ export class Game extends Scene {
             fontSize: '20px',
             fill: '#ffffff',
             align: 'center',
+            stroke: '#000000',      
+            strokeThickness: 5,
             fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
 
@@ -77,6 +79,8 @@ export class Game extends Scene {
         this.textoMagnus = this.add.text(900, 30, 'MAGNUS', {
             fontSize: '20px',
             fill: '#ffffff',
+            stroke: '#000000',      
+            strokeThickness: 5,
             align: 'center',
             fontFamily: 'Pixelify Sans',
         }).setOrigin(0.5, 0.5);
@@ -182,8 +186,7 @@ export class Game extends Scene {
         this.time.delayedCall(350, () => {
             this.cooldownAlaric = false;
         });
-    }
-    
+    } 
     iniciarCooldownMagnus() {
         this.cooldownMagnus = true;
         this.time.delayedCall(350, () => {
@@ -191,32 +194,33 @@ export class Game extends Scene {
         });
     }
     
-
-// Función general para manejar ataques
-realizarAtaque(player, tipoAtaque) {
-    let ataque;
-
-    if (tipoAtaque === 'normal') {
-        ataque = this.ataques.create(player.x, player.y, 'ataque');
-        ataque.play('ataqueAnim');
-        ataque.setData('owner', player === this.player1 ? 'Alaric' : 'Magnus');
-    } else if (tipoAtaque === 'electrico') {
-        ataque = this.ataques.create(player.x, player.y, 'ataqueElectrico');
-        ataque.play('ataqueElectricoAnim');
-        ataque.setData('owner', player === this.player1 ? 'Alaric' : 'Magnus');
-        ataque.setData('tipo', 'electrico');
+    realizarAtaque(player, tipoAtaque) {
+        let ataque;
+    
+        if (tipoAtaque === 'normal') {
+            ataque = this.ataques.create(player.x, player.y, 'ataque');
+            ataque.play('ataqueAnim');
+            ataque.setData('owner', player === this.player1 ? 'Alaric' : 'Magnus');
+        } else if (tipoAtaque === 'electrico') {
+            ataque = this.ataques.create(player.x, player.y, 'ataqueElectrico');
+            ataque.play('ataqueElectricoAnim');
+            ataque.setData('owner', player === this.player1 ? 'Alaric' : 'Magnus');
+            ataque.setData('tipo', 'electrico');
+            // Reproduce el sonido de disparo eléctrico
+            const sonidoDisparo = this.sound.add('disparoElectrico');
+            sonidoDisparo.play();
+        }
+    
+        // Calcula la dirección del ataque
+        const direction = new Phaser.Math.Vector2(
+            (player === this.player1 ? this.player2.x : this.player1.x) - player.x,
+            (player === this.player1 ? this.player2.y : this.player1.y) - player.y
+        );
+        direction.normalize();
+        ataque.setVelocity(direction.x * (tipoAtaque === 'electrico' ? 1000 : 500), direction.y * (tipoAtaque === 'electrico' ? 1000 : 500));
+        ataque.setScale(1);
     }
-
-    // Calcula la dirección del ataque
-    const direction = new Phaser.Math.Vector2(
-        (player === this.player1 ? this.player2.x : this.player1.x) - player.x,
-        (player === this.player1 ? this.player2.y : this.player1.y) - player.y
-    );
-    direction.normalize();
-    ataque.setVelocity(direction.x * (tipoAtaque === 'electrico' ? 1000 : 500), direction.y * (tipoAtaque === 'electrico' ? 1000 : 500));
-    ataque.setScale(1);
-}
-
+    
 intentaAtaqueAlaric() {
     if (this.puedeDisparar && !this.cooldownAlaric) {
         this.realizarAtaque(this.player1, this.puedeUsarAtaqueElectricoAlaric ? 'electrico' : 'normal');
@@ -234,6 +238,9 @@ intentaAtaqueMagnus() {
 reproducirExplosion(x, y) {
     const explosion = this.add.sprite(x, y, 'explosion'); // Crea el sprite de explosión
     explosion.play('explosionAnim'); // Reproduce la animación de explosión
+    // Reproduce el sonido de explosión
+    const explosionSound = this.sound.add('explosionSound');
+    explosionSound.play();
 
     // Destruye la explosión después de que termine la animación
     explosion.on('animationcomplete', () => {
@@ -391,11 +398,15 @@ generarPocion(x, y) {
 aplicarEfectoElectrico(player) {
     if (player === this.player1) {
         this.puedeUsarAtaqueElectricoAlaric = true; // Permite el ataque eléctrico para Alaric
+        const electricSound = this.sound.add('electricSound'); 
+        electricSound.play(); 
         this.time.delayedCall(10000, () => {
             this.puedeUsarAtaqueElectricoAlaric = false; // Desactiva el ataque eléctrico después de 10 segundos
         });
     } else if (player === this.player2) {
         this.puedeUsarAtaqueElectricoMagnus = true; // Permite el ataque eléctrico para Magnus
+        const electricSound = this.sound.add('electricSound'); 
+        electricSound.play(); 
         this.time.delayedCall(10000, () => {
             this.puedeUsarAtaqueElectricoMagnus = false; // Desactiva el ataque eléctrico después de 10 segundos
         });
@@ -405,9 +416,13 @@ aplicarEfectoElectrico(player) {
 recibirCuracion(player) {
     if (player === this.player1) {
         this.vidaActual = Math.min(this.vidaActual + 3, 10); // Cura 3 puntos de vida, max 10
+        const curaSound = this.sound.add('vidaSound');
+    curaSound.play();
         this.updateVida(); // Actualiza la barra de vida
     } else if (player === this.player2) {
         this.vidaActualMagnus = Math.min(this.vidaActualMagnus + 3, 10); // Cura 3 puntos de vida, max 10
+        const curaSound = this.sound.add('vidaSound');
+    curaSound.play();
         this.updateVidaMagnus(); // Actualiza la barra de vida
     }
 }
@@ -434,6 +449,11 @@ generarRayos(player) {
         // Crear el rayo justo después de que la señal desaparezca
         this.time.delayedCall(1000, () => {
             señal.destroy(); // Destruye la señal
+
+            // Reproduce el sonido del rayo aquí
+            const rayoSound = this.sound.add('rayoSound');
+            rayoSound.play();
+
             const rayo = this.add.sprite(lado === 'izquierda' ? -50 : this.cameras.main.width + 50, altura, 'Rayo').setOrigin(0.5, 0.5); // Crea el rayo
             this.rayos.add(rayo); // Agrega el rayo al grupo
 
@@ -447,21 +467,27 @@ generarRayos(player) {
             });
         });
     }
+
     // Maneja la colisión de rayos con Alaric
     this.physics.add.overlap(this.player1, this.rayos, (player, rayo) => {
+        const impactoSound = this.sound.add('rayoColision'); 
+        impactoSound.play(); 
         this.vidaActual -= 4; 
         this.updateVida(); 
         this.tintRed(this.player1); 
         rayo.destroy(); 
         this.checkForGameOver(); 
     });
+
     // Maneja la colisión de rayos con Magnus
     this.physics.add.overlap(this.player2, this.rayos, (player, rayo) => {
+        const impactoSound = this.sound.add('rayoColision'); 
+        impactoSound.play(); 
         this.vidaActualMagnus -= 4; 
         this.updateVidaMagnus(); 
         this.tintRed(this.player2); 
         rayo.destroy(); 
         this.checkForGameOver(); 
     });
-    }
+}
 }

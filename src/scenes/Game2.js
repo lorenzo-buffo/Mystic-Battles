@@ -54,6 +54,8 @@ export class Game2 extends Scene {
         this.textoTemporizador = this.add.text(425, 50, getPhrase(`Tiempo: ${this.tiempoRestante}`), {
             fontSize: '32px',
             fill: '#ffffff',
+            stroke: '#000000',      
+            strokeThickness: 5,
             fontFamily: 'Pixelify Sans'
         }).setVisible(false);
 
@@ -70,6 +72,8 @@ export class Game2 extends Scene {
         this.ataquesDisponibles = this.add.text(850, 500, getPhrase(`Ataques disponibles: ${this.clicsRestantes}/5`), {
             fontSize: '28px',
             fill: '#ffffff',
+            stroke: '#000000',      
+            strokeThickness: 5,
             fontFamily: 'Pixelify Sans'
         }).setOrigin(0.5, 0.5);
 
@@ -106,6 +110,8 @@ export class Game2 extends Scene {
         this.textoNivel = this.add.text(300, 380, getPhrase(`Nivel ${nivel + 1}: ${this.arrayNivel[nivel].join(', ')}`), {
             fontSize: '32px',
             fill: '#ffffff',
+            stroke: '#000000',      
+            strokeThickness: 5,
             fontFamily: 'Pixelify Sans'
         }).setAlpha(0).setScale(0.5);
 
