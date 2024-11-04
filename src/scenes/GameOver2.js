@@ -9,6 +9,7 @@ export class GameOver2 extends Scene
     }
 
     create(data) {
+        this.scene.get('Game2').musicacoop.stop();
         this.add.image(512, 384, 'fondoidioma');
         const mensaje = data.completo 
             ? getPhrase("¡Felicidades, lograste completar todos los hechizos!") 

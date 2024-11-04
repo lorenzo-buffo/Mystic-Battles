@@ -66,6 +66,7 @@ export class Preloader extends Scene
         this.load.image('magnusGame2', 'placeholdermagnus.png'); 
         this.load.image('menup', 'provisionalmenu.png'); 
         this.load.image('reset', 'reset.png'); 
+        this.load.image('Teclas', 'teclas.png');
         this.load.image('murcielago', 'murcielago.png'); 
         this.load.image('fondoidioma', 'fondoidiomas.png'); 
         this.load.spritesheet('caldero', 'caldero475x150.png', { frameWidth: 95, frameHeight: 150 });
@@ -81,6 +82,8 @@ export class Preloader extends Scene
         this.load.audio('emergenciasound', 'emergenciasound.wav');
         this.load.audio('numeros', 'numeros.wav');
         this.load.audio('hechizoIncorrecto', 'hechizoIncorrecto.wav');
+        this.load.audio('musicaGame', 'MusicaGame.mp3');
+        this.load.audio('musicacoop', 'MusicaGame2.mp3');
 } 
     create ()
     {

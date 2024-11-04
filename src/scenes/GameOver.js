@@ -9,7 +9,7 @@ export class GameOver extends Scene
     }
 
     create(data) {
-        
+        this.scene.get('Game').musicaGame.stop();
          this.add.image(512, 384, 'fondoidioma');
         // Texto de Game Over
         this.add.text(500, 150, getPhrase('Fin del juego'), {

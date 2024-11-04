@@ -103,11 +103,13 @@ export class Game extends Scene {
         exitButton.on('pointerdown', () => {
             this.scene.start('MainMenu');  
         });
-        //sonidos de disparos
+        //sonidos 
         this.sonidoDisparoNormal = this.sound.add('disparoNormal');
         this.sonidoDisparoElectrico = this.sound.add('disparoElectrico');
         this.sonidoEmergencia = this.sound.add('emergenciasound');
         this.sonidoNumeros = this.sound.add('numeros');
+        this.musicaGame = this.sound.add('musicaGame', { loop: true });
+        this.musicaGame.play();
     }
 
     update() {

@@ -96,6 +96,8 @@ export class Game2 extends Scene {
             callbackScope: this,
             loop: true
         });
+        this.musicacoop = this.sound.add('musicacoop', { loop: true });
+        this.musicacoop.play();
     }
 
     regenerarNiveles() {
