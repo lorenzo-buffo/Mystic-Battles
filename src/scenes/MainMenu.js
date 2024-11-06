@@ -213,7 +213,7 @@ export class MainMenu extends Scene {
  
          // Crear un contenedor para la imagen del modo VS
          const vsImageContainer = this.add.container(512, 384).setVisible(false);
-         const vsImage = this.add.image(0, 50, 'Rayo').setOrigin(0.5);
+         const vsImage = this.add.image(0, 50, 'cvs').setOrigin(0.5);
          vsImageContainer.add(vsImage);
          this.add.existing(vsImageContainer); // Asegurarse de que el contenedor esté en la escena
  
