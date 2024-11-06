@@ -84,8 +84,8 @@ export class Preloader extends Scene
         this.load.audio('emergenciasound', 'emergenciasound.wav');
         this.load.audio('numeros', 'numeros.wav');
         this.load.audio('hechizoIncorrecto', 'hechizoIncorrecto.wav');
-        this.load.audio('musicaGame', 'MusicaGame.mp3');
-        this.load.audio('musicacoop', 'MusicaGame2.mp3');
+        this.load.audio('musicaGame', 'maguitos.wav');
+        this.load.audio('musicacoop', 'murcielagillos.wav');
 } 
     create ()
     {
