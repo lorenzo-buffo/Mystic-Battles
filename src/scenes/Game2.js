@@ -21,7 +21,7 @@ export class Game2 extends Scene {
 
     create() {
         this.regenerarNiveles();
-        this.clicsRestantes = 5; // Clics disponibles
+        this.clicsRestantes = 15; // Clics disponibles
         this.enEspera = false; // Indica si está en espera
         this.add.image(512, 384, 'mapacoop');
 
@@ -284,7 +284,7 @@ export class Game2 extends Scene {
     }
     crearMurcielago() {
         let murcielago = this.murcielagosGroup.create(Math.random() * 800, -50, 'murcielago');
-        murcielago.setScale(1.2);
+        murcielago.setScale(1);
         murcielago.setInteractive();
     
         murcielago.on('pointerdown', () => {

@@ -53,6 +53,7 @@ export class MainMenu extends Scene {
         vsButton.on('pointerout', () => vsButton.setScale(1));
         vsButton.on('pointerdown', () => {
             selectedMode = 'VS';
+            updateImage(selectedMode); // Actualiza la imagen
             showPopup(getPhrase('Has seleccionado el Modo VS'));
         });
 
@@ -63,6 +64,7 @@ export class MainMenu extends Scene {
         coopButton.on('pointerout', () => coopButton.setScale(1));
         coopButton.on('pointerdown', () => {
             selectedMode = 'Coop';
+            updateImage(selectedMode); // Actualiza la imagen
             showPopup(getPhrase('Has seleccionado el Modo Cooperativo'));
         });
 
@@ -215,7 +217,11 @@ export class MainMenu extends Scene {
          const vsImageContainer = this.add.container(512, 384).setVisible(false);
          const vsImage = this.add.image(0, 50, 'cvs').setOrigin(0.5);
          vsImageContainer.add(vsImage);
-         this.add.existing(vsImageContainer); // Asegurarse de que el contenedor esté en la escena
+         this.add.existing(vsImageContainer);
+
+         const updateImage = (mode) => {
+         vsImage.setTexture(mode === 'Coop' ? 'ccoop' : 'cvs');
+};
  
          // Función para mostrar el pop-up con el texto adecuado
          const showPopup = (message) => {

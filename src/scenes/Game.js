@@ -221,8 +221,18 @@ export class Game extends Scene {
             (player === this.player1 ? this.player2.y : this.player1.y) - player.y
         );
         direction.normalize();
-        ataque.setVelocity(direction.x * (tipoAtaque === 'electrico' ? 1000 : 500), direction.y * (tipoAtaque === 'electrico' ? 1000 : 500));
+        ataque.setVelocity(
+            direction.x * (tipoAtaque === 'electrico' ? 1000 : 500), 
+            direction.y * (tipoAtaque === 'electrico' ? 1000 : 500)
+        );
         ataque.setScale(1);
+    
+        // Destruir el ataque después de 5 segundos
+        this.time.delayedCall(5000, () => {
+            if (ataque && ataque.active) {
+                ataque.destroy();
+            }
+        });
     }
     
 intentaAtaqueAlaric() {
