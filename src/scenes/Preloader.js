@@ -188,21 +188,21 @@ export class Preloader extends Scene
         this.anims.create({
             key: 'calderoAnim',
             frames: this.anims.generateFrameNumbers('caldero', { start: 0, end: 4 }), 
-            frameRate: 7, 
+            frameRate: 5, 
             repeat: -1 
         });
             // Crear la animación del caldero
             this.anims.create({
                 key: 'magnusCoopAnim',
                 frames: this.anims.generateFrameNumbers('Magnuscoop', { start: 0, end: 7 }), 
-                frameRate: 10, 
+                frameRate: 6, 
                 repeat: -1 
             });
                 // Crear la animación del caldero
         this.anims.create({
             key: 'alaricCoopAnim',
             frames: this.anims.generateFrameNumbers('Alariccoop', { start: 0, end: 7 }), 
-            frameRate: 10, 
+            frameRate: 6, 
             repeat: -1 
         });
       }
