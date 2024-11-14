@@ -166,7 +166,8 @@ export class MainMenu extends Scene {
 
         const startButton = this.add.text(0, 250, getPhrase('Comenzar'), {
             ...textStyle,
-            fontSize: 36
+            fontSize: 36,
+            fill: '#00FF00'
         }).setOrigin(0.5);
 
         startButton.setInteractive({ cursor: 'pointer' });
