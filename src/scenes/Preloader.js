@@ -71,6 +71,10 @@ export class Preloader extends Scene
         this.load.image('fondoidioma', 'fondoidiomas.png'); 
         this.load.image('cvs', 'controles vs.png'); 
         this.load.image('ccoop', 'ccoop2.png'); 
+        this.load.image('Anonimo', 'anonimo.png'); 
+        this.load.image('Google', 'google.png'); 
+        this.load.image('GitHub', 'github.png'); 
+        this.load.image('rblanco', 'rblanco.png'); 
         this.load.spritesheet('caldero', 'caldero475x150.png', { frameWidth: 95, frameHeight: 150 });
         this.load.spritesheet('Alariccoop', 'coopalaric.png', { frameWidth: 204, frameHeight: 204 });
         this.load.spritesheet('Magnuscoop', 'coopmagnus.png', { frameWidth: 204, frameHeight: 204 });
@@ -90,7 +94,7 @@ export class Preloader extends Scene
     create ()
     {
         
-        this.scene.start('MainMenu');
+        this.scene.start('Login');
 
         // Crear animaciones para Alaric
         this.anims.create({
@@ -173,7 +177,7 @@ export class Preloader extends Scene
         // Animación de explosión
         this.anims.create({
             key: 'explosionAnim',
-            frames: this.anims.generateFrameNumbers('explosion', { start: 0, end: 5 }), // Ajusta los índices
+            frames: this.anims.generateFrameNumbers('explosion', { start: 0, end: 4 }), // Ajusta los índices
             frameRate: 10,
             repeat: false
         });

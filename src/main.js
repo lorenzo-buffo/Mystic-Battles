@@ -1,11 +1,13 @@
 import { Boot } from './scenes/Boot';
+import { Preloader } from './scenes/Preloader';
+import { Login } from './scenes/Login';
 import { Game } from './scenes/Game';
 import { Game2 } from './scenes/Game2';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
-import { Preloader } from './scenes/Preloader';
 import { Idioma } from './scenes/Idioma';
 import { GameOver2} from './scenes/GameOver2';
+import { FirebasePlugin } from './Services/FirebasePlugin';
 
 
 const config = {
@@ -24,9 +26,20 @@ const config = {
           gravity: { y: 0 },
         },
     },
+    plugins: {
+        global: [
+          {
+            key: "FirebasePlugin",
+            plugin: FirebasePlugin,
+            start: true,
+            mapping: "firebase",
+          },
+        ],
+      },
     scene: [ 
         Boot,
         Preloader,
+        Login,
         Idioma,
         MainMenu,
         Game,
