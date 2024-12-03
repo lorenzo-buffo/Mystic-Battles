@@ -33,7 +33,7 @@ export class Login extends Phaser.Scene {
             this.scene.start("MainMenu");
           })
           .catch((error) => {
-            console.log("🚀 ~ file: Login.js:74 ~ .catch ~ error", error);
+            console.log("error :(", error);
           }); 
       });
 
@@ -51,7 +51,7 @@ export class Login extends Phaser.Scene {
             this.scene.start("MainMenu");
           })
           .catch((error) => {
-            console.log("🚀 ~ file: Login.js:74 ~ .catch ~ error", error);
+            console.log("error :(", error);
           });
       });
 
@@ -69,7 +69,7 @@ export class Login extends Phaser.Scene {
             this.scene.start("MainMenu");
           })
           .catch((error) => {
-            console.log("🚀 ~ file: Login.js:74 ~ .catch ~ error", error);
+            console.log("error :(", error);
           }); 
       });
 }
