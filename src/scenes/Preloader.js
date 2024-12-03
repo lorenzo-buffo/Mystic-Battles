@@ -73,7 +73,7 @@ export class Preloader extends Scene
         this.load.image('ccoop', 'ccoop2.png'); 
         this.load.image('Anonimo', 'anonimo.png'); 
         this.load.image('Google', 'google.png'); 
-        this.load.image('GitHub', 'github.png'); 
+        this.load.image('GitHub', 'github2.png'); 
         this.load.image('rblanco', 'rblanco.png'); 
         this.load.spritesheet('caldero', 'caldero475x150.png', { frameWidth: 95, frameHeight: 150 });
         this.load.spritesheet('Alariccoop', 'coopalaric.png', { frameWidth: 204, frameHeight: 204 });
