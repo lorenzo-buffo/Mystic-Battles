@@ -8,10 +8,11 @@ export class GameOver2 extends Scene
         super('GameOver2');
     }
 
+        //Funcion create con parametro data
     create(data) {
         this.scene.get('Game2').musicacoop.stop();
         this.add.image(512, 384, 'fondoidioma');
-        const mensaje = data.completo 
+        const mensaje = data.completo //Aquí se usa el operador condicional (?) para verificar si la propiedad completo de data es true o false.
             ? getPhrase("¡Felicidades, lograste completar todos los hechizos!") 
             : getPhrase("Mala suerte, no has podido completar todos los hechizos!");
     
