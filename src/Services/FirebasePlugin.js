@@ -14,8 +14,6 @@ import {
 } from "firebase/firestore";
 import {
   getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   signInAnonymously,
   signInWithPopup,
   onAuthStateChanged,

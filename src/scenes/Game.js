@@ -358,8 +358,8 @@ iniciarContador() {
 generarPocion(x, y) {
     const probabilidad = Math.random(); // Genera un número aleatorio
 
-    // 50% de probabilidad de generar una poción de curación
-    if (probabilidad < 0.5) {
+    // 20% de probabilidad de generar una poción de curación
+    if (probabilidad < 0.2) {
         const pocion = this.physics.add.sprite(x, y, 'pocion'); // Crea la poción
         pocion.setInteractive(); // Habilita la interacción
         pocion.setScale(1); // Establece la escala
@@ -374,7 +374,7 @@ generarPocion(x, y) {
             this.recibirCuracion(this.player2); // Aplica curación a Magnus
             pocion.destroy(); // Destruye la poción
         });
-    } else if (probabilidad < 0.7) {  // 20% de probabilidad de generar una poción de ataque rara
+    } else if (probabilidad < 0.4) {  // 40% de probabilidad de generar una poción de ataque rara
         const pocionAtaque = this.physics.add.sprite(x, y, 'pocion_ataque'); // Crea la poción de ataque
         pocionAtaque.setInteractive(); // Habilita la interacción
         pocionAtaque.setScale(1); // Establece la escala
@@ -389,7 +389,7 @@ generarPocion(x, y) {
             this.generarRayos(this.player2); // Genera rayos para Magnus
             pocionAtaque.destroy(); // Destruye la poción de ataque
         });
-    } else { // 30% de probabilidad de generar la poción eléctrica
+    } else { // 40% de probabilidad de generar la poción eléctrica
         const pocionElectrica = this.physics.add.sprite(x, y, 'pocionElectrica'); // Crea la poción eléctrica
         pocionElectrica.setInteractive(); // Habilita la interacción
         pocionElectrica.setScale(1); // Establece la escala

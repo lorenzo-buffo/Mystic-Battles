@@ -91,7 +91,7 @@ export class Game2 extends Scene {
         this.murcielagosGroup = this.physics.add.group();
 
         this.time.addEvent({
-            delay: 800,
+            delay: 900,
             callback: this.crearMurcielago,
             callbackScope: this,
             loop: true
@@ -300,7 +300,7 @@ export class Game2 extends Scene {
     
                 if (this.clicsRestantes === 0) {
                     this.enEspera = true;
-                    this.time.delayedCall(2500, () => {
+                    this.time.delayedCall(1500, () => {
                         this.clicsRestantes = 5;
                         this.ataquesDisponibles.setText(`Ataques disponibles: ${this.clicsRestantes}/5`);
                         this.enEspera = false;
