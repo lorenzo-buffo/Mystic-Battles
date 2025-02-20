@@ -20,9 +20,9 @@ export class Game2 extends Scene {
     }
 
     create() {
-        this.regenerarNiveles();
-        this.clicsRestantes = 5; // Clics disponibles
-        this.enEspera = false; // Indica si está en espera
+        this.regenerarNiveles(); //Llama a regenerarNiveles() para generar los niveles aleatorios.
+        this.clicsRestantes = 5;//clics disponibles
+        this.enEspera = false; // Controla si hay un tiempo de espera
         this.add.image(512, 384, 'mapacoop');
 
         let exitButton = this.add.image(950, 50, 'exit')
@@ -51,6 +51,7 @@ export class Game2 extends Scene {
                 this.time.delayedCall(5000, this.ocultarArrayNivel, [], this);
             }
         });
+        //Muestra un cuadro con una animación y, cuando termina, llama a mostrarArrayNivel().
 
         this.textoTemporizador = this.add.text(425, 50, getPhrase(`Tiempo: ${this.tiempoRestante}`), {
             fontSize: '32px',
@@ -59,6 +60,7 @@ export class Game2 extends Scene {
             strokeThickness: 5,
             fontFamily: 'Pixelify Sans'
         }).setVisible(false);
+        // crea un texto para mostrar el tiempo restante
 
         this.vidaJugadores = 0; // Vida inicial de los jugadores
         this.vidaJugadoresSprite = this.add.sprite(500, 150, 'barraVida', this.vidaJugadores).setScale(1.5);
@@ -96,7 +98,9 @@ export class Game2 extends Scene {
             callbackScope: this,
             loop: true
         });
-        this.musicacoop = this.sound.add('musicacoop', { loop: true });
+        //Crea un grupo de murciélagos que aparecen cada 900ms.
+
+        this.musicacoop = this.sound.add('musicacoop', { loop: true });// reproduce la musica en bucle
         this.musicacoop.play();
     }
 
@@ -108,6 +112,7 @@ export class Game2 extends Scene {
         }
         console.log(this.arrayNivel);
     }
+    //Genera combinaciones de letras(teclas que debe presionar el jugador) aleatorias para cada nivel.
 
     mostrarArrayNivel(nivel) {
         this.textoNivel = this.add.text(300, 380, getPhrase(`Nivel ${nivel + 1}: ${this.arrayNivel[nivel].join(', ')}`), {
@@ -167,11 +172,12 @@ export class Game2 extends Scene {
             loop: true
         });
     }
+    //Inicia el temporizador y lo actualiza cada segundo
 
     reducirTiempo() {
         this.tiempoRestante--;
     
-        this.textoTemporizador.setText(getPhrase(`Tiempo: ${this.tiempoRestante}`));
+        this.textoTemporizador.setText(getPhrase(`Tiempo: ${this.tiempoRestante}`));// actualiza el tiempo en pantalla
     
         if (this.tiempoRestante <= 0) {
             this.temporizador.remove();
@@ -195,22 +201,27 @@ export class Game2 extends Scene {
             this.textoBarraJugador.setText(this.arrayJugador.join(' '));
         }
     }
+    //Guarda las teclas presionadas por el jugador.
+
     
     update() {
-        const cantidadTeclas = this.arrayNivel[this.nivelActual]?.length;
+        const cantidadTeclas = this.arrayNivel[this.nivelActual]?.length;// verifica si el jugador completo el nivel
 
         if (this.puedeJugar && this.arrayJugador.length === cantidadTeclas) {
             const nivelCorrecto = this.arrayNivel[this.nivelActual].every((letra, index) => letra === this.arrayJugador[index]);
+            /*Comprueba si el jugador puede jugar y si presionó el número correcto de teclas
+             y compara las teclas que el jugador presionó con la secuencia correcta*/
 
             if (nivelCorrecto) {
                 this.nivelActual++;
                 this.arrayJugador = [];
                 this.textoBarraJugador.setText('');
                 this.textoTemporizador.setVisible(false);
-
+                
                 if (this.nivelActual >= this.niveles) {
                     this.completo = true;
                     this.scene.start('GameOver2', { completo: this.completo });
+                    // si supera todos los niveles completa el juego
                 } else {
                     this.mostrarTexto = true;
                     this.mostrarArrayNivel(this.nivelActual);
@@ -231,6 +242,7 @@ export class Game2 extends Scene {
                 }
             }
         });
+        // si el murcielago sale fuera de la pantalla se destruye
     }
 
     aumentarVida() {
@@ -239,6 +251,7 @@ export class Game2 extends Scene {
         if (this.vidaJugadores >= 10) {
             this.scene.start('GameOver2', { completo: this.completo }); // Iniciar GameOver2
         }
+        //Si el jugador pierde 10 vidas, pierde la partida.
     }
     
     mostrarMensajeIncorrecto() {
@@ -256,6 +269,7 @@ export class Game2 extends Scene {
             scale: { from: 0.5, to: 1 },
             duration: 500,
             ease: 'Power2',
+            //Hace que el mensaje aparezca poco a poco con una animación.
             onComplete: () => {
                 this.time.delayedCall(500, () => {
                     this.tweens.add({
@@ -271,6 +285,7 @@ export class Game2 extends Scene {
                 });
             }
         });
+        //Luego de un tiempo, el mensaje desaparece y se elimina.
     }
 
     generarArrayAleatorio(cantidad) {
@@ -281,6 +296,7 @@ export class Game2 extends Scene {
             array.push(letraAleatoria);
         }
         return array;
+        //Genera un array con letras aleatorias de A-Z, usado para crear niveles.
     }
     crearMurcielago() {
         let murcielago = this.murcielagosGroup.create(Math.random() * 800, -50, 'murcielago');
@@ -309,6 +325,7 @@ export class Game2 extends Scene {
             }
         });
     
+        //Hace que el murciélago aparesca en un punto aleatorio y luego empiece a revolotear.
         let destinoX = Phaser.Math.Between(100, 900);
         let destinoY = 400;
         this.tweens.add({

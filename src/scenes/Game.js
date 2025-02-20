@@ -17,10 +17,12 @@ export class Game extends Scene {
         this.posicionMagnus = { x: 900, y: 100 };
         this.puedeUsarAtaqueElectricoAlaric = false;
         this.puedeUsarAtaqueElectricoMagnus = false;
+        /* se definen las variables para controlar la vida de los personajes, el estado del contador,
+         si pueden disparar o moverse y los cooldowns de ataque*/
     }
 
     create() {
-        this.initVariables();
+        this.initVariables(); //llama a initVariables para iniciarlas antes de comenzar
         this.add.image(512, 384, 'mapa');
         // crear a Alaric
         this.player1 = this.physics.add.sprite(this.posicionAlaric.x, this.posicionAlaric.y, "alaric_walk");
@@ -35,6 +37,10 @@ export class Game extends Scene {
         this.player2.setBounce(0);
         this.player2.setCollideWorldBounds(true);
         this.player2.play('move_magnus');
+        /*Crea los dos personajes (player1 para Alaric y player2 para Magnus).
+        Se configuran con físicas (this.physics.add.sprite).
+        Se ajustan para que no reboten (setBounce(0)) y no salgan del mapa (setCollideWorldBounds(true)).
+        Se inicia la animación de movimiento.*/
 
         // movimiento de Alaric
         this.cursors = this.input.keyboard.addKeys({
@@ -50,7 +56,7 @@ export class Game extends Scene {
         // colisión entre ambos personajes
         this.physics.add.collider(this.player1, this.player2);
 
-        // generar cajas
+        //Crea un grupo de cajas y define colisiones con los jugadores.
         this.cajas = this.physics.add.group();
         this.crearCajas();
         this.physics.add.collider(this.player1, this.cajas);
@@ -60,7 +66,7 @@ export class Game extends Scene {
         this.input.keyboard.on('keydown-SPACE', this.intentaAtaqueAlaric, this);
         this.input.keyboard.on('keydown-SHIFT', this.intentaAtaqueMagnus, this);
 
-        // crea un grupo de ataques
+        //Crea un grupo donde se almacenarán los ataques
         this.ataques = this.physics.add.group();
 
         // crea barra de vida para Alaric
@@ -113,7 +119,7 @@ export class Game extends Scene {
     }
 
     update() {
-        if (!this.puedeMoverse || this.enContador) {
+        if (!this.puedeMoverse || this.enContador) { //Si hay un contador en curso, no se ejecuta el código de movimiento.
             return; 
         }
         // controla el movimiento de Alaric según la tecla presionada
@@ -157,7 +163,7 @@ export class Game extends Scene {
         }
 
         // interacciones y colisiones de los ataques
-        this.ataques.children.iterate((ataque) => {
+        this.ataques.children.iterate((ataque) => { //children.iterate() recorre cada objeto dentro del grupo y lo pasa a la función como ataque
             if (ataque) {
                 this.physics.add.collider(ataque, this.cajas, (ataque, caja) => {
                     this.reproducirExplosion(ataque.x, ataque.y); // Llamar a la función de explosión
@@ -185,7 +191,10 @@ export class Game extends Scene {
                     this.recibeDaño();
                 }
             }
-        });
+        });/* Comprueba si un ataque colisiona con Magnus (this.player2).
+        Si el ataque pertenece a Alaric, se ejecuta la explosión, se destruye el ataque y Magnus recibe daño (this.recibeDañoMagnus()).
+        Luego, comprueba si un ataque colisiona con Alaric (this.player1).
+        Si el ataque pertenece a Magnus, se ejecuta la explosión, se destruye el ataque y Alaric recibe daño (this.recibeDaño()).*/
     }
 
     iniciarCooldownAlaric() {
@@ -200,6 +209,10 @@ export class Game extends Scene {
             this.cooldownMagnus = false;
         });
     }
+    /*cooldownAlaric y cooldownMagnus evitan que los jugadores disparen repetidamente sin límite.
+    Al iniciar el cooldown:
+    Se establece cooldownAlaric o cooldownMagnus en true, lo que bloquea temporalmente el disparo.
+    Se usa this.time.delayedCall(350, () => { ... }) para esperar 350 ms antes de volver a permitir el disparo (false).*/
     
     realizarAtaque(player, tipoAtaque) {
         let ataque;
@@ -236,16 +249,16 @@ export class Game extends Scene {
     }
     
 intentaAtaqueAlaric() {
-    if (this.puedeDisparar && !this.cooldownAlaric) {
+    if (this.puedeDisparar && !this.cooldownAlaric) { //Solo permite disparar si puedeDisparar es true y el cooldown ha terminado.
         this.realizarAtaque(this.player1, this.puedeUsarAtaqueElectricoAlaric ? 'electrico' : 'normal');
-        this.iniciarCooldownAlaric();
+        this.iniciarCooldownAlaric();//para evitar spam de ataques.
     }
 }
 
 intentaAtaqueMagnus() {
-    if (this.puedeDisparar && !this.cooldownMagnus) {
+    if (this.puedeDisparar && !this.cooldownMagnus) {//Solo permite disparar si puedeDisparar es true y el cooldown ha terminado.
         this.realizarAtaque(this.player2, this.puedeUsarAtaqueElectricoMagnus ? 'electrico' : 'normal');
-        this.iniciarCooldownMagnus();
+        this.iniciarCooldownMagnus();//para evitar spam de ataques.
     }
 }
 
